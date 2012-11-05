@@ -791,6 +791,12 @@ class PPField(object):
         """A stash property giving access to the associated STASH object, now supporting __eq__"""
         return STASH(self.lbuser[6], self.lbuser[3] / 1000, self.lbuser[3] % 1000)
 
+    @property
+    def versioned_stash(self):
+        '''A versioned_stash property giving access to the associated STASH object with version'''
+        version = '/vn%4.2f' % ((self.lbsrce / 10000) / 100.0)
+        return str(self.stash) + version
+
     # lbtim
     def _lbtim_setter(self, new_value):
         if not isinstance(new_value, SplittableInt):

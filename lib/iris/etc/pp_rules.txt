@@ -417,7 +417,7 @@ CMAttribute("units", "m")
 
 # new stash code mega-rule
 IF
-str(f.stash) in iris.fileformats.um_cf_map.STASH_TO_CF
+f.versioned_stash in  iris.fileformats.um_cf_map.STASH_TO_CF
 THEN
 CMAttribute("standard_name", iris.fileformats.um_cf_map.STASH_TO_CF[str(f.stash)].cfname)
 CMAttribute("units", iris.fileformats.um_cf_map.STASH_TO_CF[str(f.stash)].unit) 
