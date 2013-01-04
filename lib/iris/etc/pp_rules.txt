@@ -441,14 +441,6 @@ CMAttribute("units", "m")
 #                                                                              #
 ################################################################################
 
-# MOSIG stash code to CF meta-data rule.
-IF
-str(f.stash) in MOSIG_STASH_TO_CF
-THEN
-CMAttribute('standard_name', MOSIG_STASH_TO_CF[str(f.stash)].name)
-CMAttribute('units', MOSIG_STASH_TO_CF[str(f.stash)].unit)
-CMAttribute('lone_name', None)
-
 # UM stash code to CF meta-data rule.
 IF
 str(f.stash) in STASH_TO_CF

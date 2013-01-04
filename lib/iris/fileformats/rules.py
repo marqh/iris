@@ -37,9 +37,11 @@ import numpy
 import iris.config as config
 import iris.cube
 import iris.exceptions
+import iris.fileformats.metarelate
 import iris.fileformats.mosig_cf_map
 import iris.fileformats.um_cf_map
 import iris.unit
+
 
 
 RuleResult = collections.namedtuple('RuleResult', ['cube', 'matching_rules', 'factories'])
@@ -361,8 +363,9 @@ class Rule(object):
             globals().update(iris.aux_factory.__dict__)
             globals().update(iris.coords.__dict__)
             globals().update(iris.coord_systems.__dict__)
-            globals().update(iris.fileformats.mosig_cf_map.__dict__)
-            globals().update(iris.fileformats.um_cf_map.__dict__)
+            #globals().update(iris.fileformats.mosig_cf_map.__dict__)
+            #globals().update(iris.fileformats.um_cf_map.__dict__)
+            globals().update(iris.fileformats.metarelate.__dict__)
             globals().update(iris.unit.__dict__)
             _import_pending = False
         
