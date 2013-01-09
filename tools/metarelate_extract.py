@@ -41,6 +41,8 @@ import collections
 
 CFname = collections.namedtuple('CFname', ['cfname', 'unit'])
 
+G2param = collections.namedtuple('G2param', ['edition', 'discipline', 'category', 'number'])
+
 
 '''
 
@@ -104,7 +106,7 @@ with fuseki.FusekiServer(3333) as fu_p:
         cfitems = dict([(cf.split(';')[0], cf.split(';')[1]) for cf in cfitems])
         st_name = cfitems['http://www.metarelate.net/predicates/CF.html#standard_name'].split('/')[-1]
         units = cfitems['http://www.metarelate.net/predicates/CF.html#units']
-        stash_list.append(''' "%s" : CFname(cfname="%s", unit="%s"),''' % (stashcode, st_name, units))
+        stash_list.append('\t"%s" : CFname(cfname="%s", unit="%s"),' % (stashcode, st_name, units))
     stash_string = '\n'.join(stash_list)
     stash_string = line_sort(stash_string)
     stash_dict = 'STASH_TO_CF = {\n' + stash_string + enddict
@@ -130,10 +132,10 @@ with fuseki.FusekiServer(3333) as fu_p:
         cfitems = dict([(cf.split(';')[0], cf.split(';')[1]) for cf in cfitems])
         st_name = cfitems['http://www.metarelate.net/predicates/CF.html#standard_name'].split('/')[-1]
         units = cfitems['http://www.metarelate.net/predicates/CF.html#units']
-        fc_list.append(''' %s : CFname(cfname="%s", unit="%s"),''' % (fieldcode, st_name, units))
+        fc_list.append('\t%s : CFname(cfname="%s", unit="%s"),' % (fieldcode, st_name, units))
     fc_string = '\n'.join(fc_list)
     fc_string = num_line_sort(fc_string)
-    fc_dict = 'FC_TO_CF = {\n' + fc_string + enddict
+    fc_dict = 'LBFC_TO_CF = {\n' + fc_string + enddict
                 
 
 #retrieve valid fieldcode (one and only one) to cf (one and only one) mappings from
@@ -155,11 +157,35 @@ with fuseki.FusekiServer(3333) as fu_p:
             raise ValueError('multiple stash codes in mapping %s' % stashcode)
         st_name = cfitems['http://www.metarelate.net/predicates/CF.html#standard_name'].split('/')[-1]
         units = cfitems['http://www.metarelate.net/predicates/CF.html#units']
-        cf_list.append(''' CFname(cfname="%s", unit="%s"): %s,''' % (st_name, units, fieldcode))
+        cf_list.append('\tCFname(cfname="%s", unit="%s"): %s,' % (st_name, units, fieldcode))
     cf_string = '\n'.join(cf_list)
     cf_string = line_sort(cf_string)
-    cf_dict = 'CF_TO_FC = {\n' + cf_string + enddict
+    cf_dict = 'CF_TO_LBFC = {\n' + cf_string + enddict
                 
+#retrieve valid grib quartets (one and only one) to cf (one and only one) mappings from
+#the metarelate triplestore
+    g2p_cf_maps = fu_p.retrieve_mappings('http://metarelate.net/metocean/format/grib/2',
+                'http://metarelate.net/metocean/format/cf', nsources=1, ntargets=1,
+        source_prefix='http://codes.wmo.int/grib/2/codeflag/4.2')
+    g2p_list = []
+    for mapping in g2p_cf_maps:
+        g2param = mapping['source_comps']
+        if len(g2param.split('&')) == 1:
+            g2param = {'edition': '2', 'discipline':g2param.split('/')[-3],'category':g2param.split('/')[-2], 'number':g2param.split('/')[-1]}
+        else:
+            raise ValueError('multiple grib2 parameter codes in mapping %s' % grparam)
+        cfitems = mapping['target_cfitems']
+        if len(cfitems.split('&')) != 1:
+            raise ValueError('multiple cf items codes in mapping %s' % cfitems)
+        cfitems = cfitems.split('|')
+        cfitems = dict([(cf.split(';')[0], cf.split(';')[1]) for cf in cfitems])
+        st_name = cfitems['http://www.metarelate.net/predicates/CF.html#standard_name'].split('/')[-1]
+        units = cfitems['http://www.metarelate.net/predicates/CF.html#units']
+        g2param.update({'sn':st_name, 'u':units})
+        g2p_list.append('\tG2param(edition=%(edition)s, discipline=%(discipline)s, category=%(category)s, number=%(number)s) : CFname(cfname="%(sn)s", unit="%(u)s"),' % g2param)
+    g2pcf_string = '\n'.join(g2p_list)
+    g2pcf_string = line_sort(g2pcf_string)
+    g2pcf_dict = 'GRIB2P_TO_CF = {\n' + g2pcf_string + enddict
 
 
 
@@ -173,8 +199,8 @@ with open('../lib/iris/fileformats/metarelate.py', 'w') as umcf:
     umcf.write('\n')
     umcf.write(cf_dict)
     umcf.write('\n')
-#     umcf.write(gribcf_dict)
-#     umcf.write('\n')
+    umcf.write(g2pcf_dict)
+    umcf.write('\n')
 #     umcf.write(cfgrib_dict)
 #     umcf.write('\n')
 

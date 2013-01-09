@@ -98,233 +98,243 @@ CMAttribute("units", "???")
 ### Grib2 params ###
 ####################
 
+#grib2 parameter codemetarule 
+
+IF
+grib.edition == 2
+G2param(edition=grib.edition, discipline=grib.discipline, category=grib.parameterCategory, number=grib.parameterNumber) in GRIB2P_TO_CF
+THEN
+CMAttribute("standard_name", GRIB2P_TO_CF[G2param(edition=grib.edition, discipline=grib.discipline, category=grib.parameterCategory, number=grib.parameterNumber)].cfname)
+CMAttribute("units", GRIB2P_TO_CF[G2param(edition=grib.edition, discipline=grib.discipline, category=grib.parameterCategory, number=grib.parameterNumber)].unit) 
+
 ## Note: Do we really want to be maintaining a list of these? There's lots of them...
 ## Future grib  api versions may have "cfName" available for more params...
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 0
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "air_temperature")
-CMAttribute("units", "kelvin")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 0
-grib.parameterNumber == 2
-THEN
-CMAttribute("standard_name", "potential_temperature")
-CMAttribute("units", "K")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 0
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "air_temperature")
+# CMAttribute("units", "kelvin")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 1
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "specific_humidity")
-CMAttribute("units", "kg kg-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 0
+# grib.parameterNumber == 2
+# THEN
+# CMAttribute("standard_name", "potential_temperature")
+# CMAttribute("units", "K")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 1
-grib.parameterNumber == 1
-THEN
-CMAttribute("standard_name", "relative_humidity")
-CMAttribute("units", "%")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 1
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "specific_humidity")
+# CMAttribute("units", "kg kg-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 1
-grib.parameterNumber == 3
-THEN
-CMAttribute("standard_name", "precipitable_water")
-CMAttribute("units", "kg m-2")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 1
+# grib.parameterNumber == 1
+# THEN
+# CMAttribute("standard_name", "relative_humidity")
+# CMAttribute("units", "%")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 1
-grib.parameterNumber == 22
-THEN
-CMAttribute("standard_name", "cloud_mixing_ratio")
-CMAttribute("units", "kg kg-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 1
+# grib.parameterNumber == 3
+# THEN
+# CMAttribute("standard_name", "precipitable_water")
+# CMAttribute("units", "kg m-2")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 1
-grib.parameterNumber == 13
-THEN
-CMAttribute("standard_name", "water_equivalent_of_accumulated_snow_depth")
-CMAttribute("units", "kg m-2")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 1
+# grib.parameterNumber == 22
+# THEN
+# CMAttribute("standard_name", "cloud_mixing_ratio")
+# CMAttribute("units", "kg kg-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 2
-grib.parameterNumber == 1
-THEN
-CMAttribute("standard_name", "wind_speed")
-CMAttribute("units", "m s-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 1
+# grib.parameterNumber == 13
+# THEN
+# CMAttribute("standard_name", "water_equivalent_of_accumulated_snow_depth")
+# CMAttribute("units", "kg m-2")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 2
-grib.parameterNumber == 2
-THEN
-CMAttribute("standard_name", "x_wind")
-CMAttribute("units", "m s-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 2
+# grib.parameterNumber == 1
+# THEN
+# CMAttribute("standard_name", "wind_speed")
+# CMAttribute("units", "m s-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 2
-grib.parameterNumber == 3
-THEN
-CMAttribute("standard_name", "y_wind")
-CMAttribute("units", "m s-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 2
+# grib.parameterNumber == 2
+# THEN
+# CMAttribute("standard_name", "x_wind")
+# CMAttribute("units", "m s-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 2
-grib.parameterNumber == 8
-THEN
-CMAttribute("standard_name", "vertical_velocity_(pressure)")
-CMAttribute("units", "Pa s-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 2
+# grib.parameterNumber == 3
+# THEN
+# CMAttribute("standard_name", "y_wind")
+# CMAttribute("units", "m s-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 2
-grib.parameterNumber == 10
-THEN
-CMAttribute("standard_name", "absolute_vorticity")
-CMAttribute("units", "s-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 2
+# grib.parameterNumber == 8
+# THEN
+# CMAttribute("standard_name", "vertical_velocity_(pressure)")
+# CMAttribute("units", "Pa s-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 3
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "pressure")
-CMAttribute("units", "Pa")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 2
+# grib.parameterNumber == 10
+# THEN
+# CMAttribute("standard_name", "absolute_vorticity")
+# CMAttribute("units", "s-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 3
-grib.parameterNumber == 1
-THEN
-CMAttribute("standard_name", "pressure_reduced_to_msl")
-CMAttribute("units", "Pa")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 3
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "pressure")
+# CMAttribute("units", "Pa")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 3
-grib.parameterNumber == 3
-THEN
-CMAttribute("standard_name", "icao_standard_atmosphere_reference_height")
-CMAttribute("units", "m")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 3
+# grib.parameterNumber == 1
+# THEN
+# CMAttribute("standard_name", "pressure_reduced_to_msl")
+# CMAttribute("units", "Pa")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 3
-grib.parameterNumber == 5
-THEN
-CMAttribute("standard_name", "geopotential_height")
-CMAttribute("units", "gpm")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 3
+# grib.parameterNumber == 3
+# THEN
+# CMAttribute("standard_name", "icao_standard_atmosphere_reference_height")
+# CMAttribute("units", "m")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 3
-grib.parameterNumber == 9
-THEN
-CMAttribute("standard_name", "geopotential_height_anomaly")
-CMAttribute("units", "gpm")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 3
+# grib.parameterNumber == 5
+# THEN
+# CMAttribute("standard_name", "geopotential_height")
+# CMAttribute("units", "gpm")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 6
-grib.parameterNumber == 1
-THEN
-CMAttribute("standard_name", "total_cloud_cover")
-CMAttribute("units", "%")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 3
+# grib.parameterNumber == 9
+# THEN
+# CMAttribute("standard_name", "geopotential_height_anomaly")
+# CMAttribute("units", "gpm")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 6
-grib.parameterNumber == 6
-THEN
-CMAttribute("standard_name", "cloud_water")
-CMAttribute("units", "kg m-2")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 6
+# grib.parameterNumber == 1
+# THEN
+# CMAttribute("standard_name", "total_cloud_cover")
+# CMAttribute("units", "%")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 7
-grib.parameterNumber == 6
-THEN
-CMAttribute("standard_name", "convective_available_potential_energy")
-CMAttribute("units", "J kg-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 6
+# grib.parameterNumber == 6
+# THEN
+# CMAttribute("standard_name", "cloud_water")
+# CMAttribute("units", "kg m-2")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 7
-grib.parameterNumber == 7
-THEN
-CMAttribute("standard_name", "convective_inhibition")
-CMAttribute("units", "J kg-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 7
+# grib.parameterNumber == 6
+# THEN
+# CMAttribute("standard_name", "convective_available_potential_energy")
+# CMAttribute("units", "J kg-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 7
-grib.parameterNumber == 8
-THEN
-CMAttribute("standard_name", "storm_relative_helicity")
-CMAttribute("units", "J kg-1")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 7
+# grib.parameterNumber == 7
+# THEN
+# CMAttribute("standard_name", "convective_inhibition")
+# CMAttribute("units", "J kg-1")
 
-IF
-grib.edition == 2
-grib.discipline == 0
-grib.parameterCategory == 14
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "total_ozone")
-CMAttribute("units", "Dobson")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 7
+# grib.parameterNumber == 8
+# THEN
+# CMAttribute("standard_name", "storm_relative_helicity")
+# CMAttribute("units", "J kg-1")
 
-IF
-grib.edition == 2
-grib.discipline == 2
-grib.parameterCategory == 0
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "land_cover")
-CMAttribute("units", "proportion")
+# IF
+# grib.edition == 2
+# grib.discipline == 0
+# grib.parameterCategory == 14
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "total_ozone")
+# CMAttribute("units", "Dobson")
 
-IF
-grib.edition == 2
-grib.discipline == 10
-grib.parameterCategory == 2
-grib.parameterNumber == 0
-THEN
-CMAttribute("standard_name", "ice_cover")
-CMAttribute("units", "proportion")
+# IF
+# grib.edition == 2
+# grib.discipline == 2
+# grib.parameterCategory == 0
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "land_cover")
+# CMAttribute("units", "proportion")
+
+# IF
+# grib.edition == 2
+# grib.discipline == 10
+# grib.parameterCategory == 2
+# grib.parameterNumber == 0
+# THEN
+# CMAttribute("standard_name", "ice_cover")
+# CMAttribute("units", "proportion")
 
 
 #######################################

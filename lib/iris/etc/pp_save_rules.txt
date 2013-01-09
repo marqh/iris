@@ -60,70 +60,79 @@ THEN
     pp.lbuser[3] = 1000 * (cm.attributes['STASH'].section or 0) + (cm.attributes['STASH'].item or 0)
     pp.lbuser[6] = (cm.attributes['STASH'].model or 0)
 
-############################################
-# Attempt to derive LBFC from the STASH code
-#
+## LBFC from standard name
 
 IF
-    'STASH' in cm.attributes
-    isinstance(cm.attributes['STASH'], iris.fileformats.pp.STASH)
-    cm.attributes['STASH'] == iris.fileformats.pp.STASH(1, 3, 236)
+CFname(cfname=cm.standard_name, unit=str(cm.units)) in CF_TO_LBFC
 THEN
-    pp.lbfc = 16
+pp.lbfc = CF_TO_LBFC[CFname(cfname=cm.standard_name, unit=str(cm.units))]
 
-IF
-    'STASH' in cm.attributes
-    isinstance(cm.attributes['STASH'], iris.fileformats.pp.STASH)
-    cm.attributes['STASH'] == iris.fileformats.pp.STASH(1, 16, 202)
-THEN
-    pp.lbfc = 1
 
-############################################
-# Fallback to derive LBFC from the standard_name
-#
 
-IF
-    pp.lbfc == 0
-    cm.name() in ['geopotential_height']
-THEN
-    pp.lbfc = 1
+# ############################################
+# # Attempt to derive LBFC from the STASH code
+# #
 
-IF
-    pp.lbfc == 0
-    cm.name() in ['temperature', 'air_temperature']
-THEN
-    pp.lbfc = 16
+# IF
+#     'STASH' in cm.attributes
+#     isinstance(cm.attributes['STASH'], iris.fileformats.pp.STASH)
+#     cm.attributes['STASH'] == iris.fileformats.pp.STASH(1, 3, 236)
+# THEN
+#     pp.lbfc = 16
 
-IF
-    pp.lbfc == 0
-    cm.name() in ['sea_surface_elevation']
-THEN
-    pp.lbfc = 608
+# IF
+#     'STASH' in cm.attributes
+#     isinstance(cm.attributes['STASH'], iris.fileformats.pp.STASH)
+#     cm.attributes['STASH'] == iris.fileformats.pp.STASH(1, 16, 202)
+# THEN
+#     pp.lbfc = 1
 
-IF
-    cm.name() in ['wind_gust']
-THEN
-    pp.lbfc = 1694
+# ############################################
+# # Fallback to derive LBFC from the standard_name
+# #
 
-IF
-    cm.name() in ['wind_speed']
-THEN
-    pp.lbfc = 50
+# IF
+#     pp.lbfc == 0
+#     cm.name() in ['geopotential_height']
+# THEN
+#     pp.lbfc = 1
 
-IF
-    cm.name() in ['large_scale_rainfall_rate']
-THEN
-    pp.lbfc = 99
+# IF
+#     pp.lbfc == 0
+#     cm.name() in ['temperature', 'air_temperature']
+# THEN
+#     pp.lbfc = 16
 
-IF
-    cm.name() in ['eastward_wind']
-THEN
-    pp.lbfc = 56
+# IF
+#     pp.lbfc == 0
+#     cm.name() in ['sea_surface_elevation']
+# THEN
+#     pp.lbfc = 608
 
-IF
-    cm.name() in ['northward_wind']
-THEN
-    pp.lbfc = 57
+# IF
+#     cm.name() in ['wind_gust']
+# THEN
+#     pp.lbfc = 1694
+
+# IF
+#     cm.name() in ['wind_speed']
+# THEN
+#     pp.lbfc = 50
+
+# IF
+#     cm.name() in ['large_scale_rainfall_rate']
+# THEN
+#     pp.lbfc = 99
+
+# IF
+#     cm.name() in ['eastward_wind']
+# THEN
+#     pp.lbfc = 56
+
+# IF
+#     cm.name() in ['northward_wind']
+# THEN
+#     pp.lbfc = 57
 
 
 ######################################################
@@ -618,8 +627,8 @@ THEN
     pp.bmdi = -1e30
 
 
-# CFname mega rule
-IF
-    (cm.name(),cm.units) in iris.fileformats.um_cf_map.CF_TO_LBFC
-THEN
-    pp.lbfc = iris.fileformats.um_cf_map.CF_TO_LBFC[(cm.name(),cm.units)]
+# # CFname mega rule
+# IF
+#     (cm.name(),cm.units) in iris.fileformats.um_cf_map.CF_TO_LBFC
+# THEN
+#     pp.lbfc = iris.fileformats.um_cf_map.CF_TO_LBFC[(cm.name(),cm.units)]
