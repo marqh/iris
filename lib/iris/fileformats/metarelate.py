@@ -26,10 +26,10 @@ G2param = collections.namedtuple('G2param', ['edition', 'discipline', 'category'
 
 STASH_TO_CF = {
 	"m01s00i001" : CFname(cfname="surface_air_pressure", unit="Pa"),
-	# "m01s00i002" : CFname(cfname="eastward_wind", unit="m s-1"),
-	# "m01s00i002" : CFname(cfname="x_wind", unit="m s-1"),
-	# "m01s00i003" : CFname(cfname="northward_wind", unit="m s-1"),
-	# "m01s00i003" : CFname(cfname="y_wind", unit="m s-1"),
+	"m01s00i002" : CFname(cfname="eastward_wind", unit="m s-1"),
+	"m01s00i002" : CFname(cfname="x_wind", unit="m s-1"),
+	"m01s00i003" : CFname(cfname="northward_wind", unit="m s-1"),
+	"m01s00i003" : CFname(cfname="y_wind", unit="m s-1"),
 	"m01s00i002" : CFname(cfname="eastward_wind", unit="unknown"),
 	"m01s00i003" : CFname(cfname="northward_wind", unit="unknown"),        
 	"m01s00i004" : CFname(cfname="air_potential_temperature", unit="K"),
