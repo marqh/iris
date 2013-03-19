@@ -48,3 +48,6 @@ docs/iris/src/iris/
 \#*
 \.\#*
 *.swp
+
+# rule logs
+rule_logs/

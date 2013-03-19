@@ -111,7 +111,8 @@ def _verbose_log(format, filename, rules):
 
 
 # Prepares a logger for file-based logging of rule usage
-def _prepare_rule_logger(verbose=False):
+#def _prepare_rule_logger(verbose=False):
+def _prepare_rule_logger(verbose=True):
     # Default to the dummy logger that does nothing
     logger = _dummy_log
 
