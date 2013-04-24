@@ -261,7 +261,7 @@ class Grib1LocalCFConstrainedParamMapping(Mapping):
         phenom, con =  self.target.notation()
         str_elem = '\tG1Lparam({ed}, {t2version}, {centre}, {iParam}): '
         str_elem += '(CFname({psname}, {plname}, {punits}), '
-        str_elem += 'DimensionCoordinate({csname}, {cunits}, [{cpoints}])),\n'
+        str_elem += 'DimensionCoordinate({csname}, {cunits}, ({cpoints},))),\n'
         str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
                                    iParam=iparam, psname=phenom['cfsn'],
                                    plname='None', punits=phenom['units'],
@@ -331,7 +331,7 @@ class CFConstrainedGrib1LocalParamMapping(Mapping):
         ed, t2version, centre, iparam = self.target.notation()
         phenom, con =  self.source.notation()
         str_elem = '(CFname({psname}, {plname}, {punits}), '
-        str_elem += 'DimensionCoordinate({csname}, {cunits}, [{cpoints}])): '
+        str_elem += 'DimensionCoordinate({csname}, {cunits}, ({cpoints},))): '
         str_elem += 'G1Lparam({ed}, {t2version}, {centre}, {iParam}),\n'
         str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
                                    iParam=iparam, psname=phenom['cfsn'],
