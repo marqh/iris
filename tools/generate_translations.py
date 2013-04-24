@@ -53,9 +53,14 @@ CFname = collections.namedtuple('CFname', ['standard_name', 'long_name',
                                            'unit'])
 '''
 
+
 grib_tuple_def = '''
 G2param = collections.namedtuple('G2param', ['edition', 'discipline',
                                              'category', 'number'])
+G1Lparam = collections.namedtuple('G1Lparam', ['edition', 't2version', 'centre',
+                                               'iParam'])
+DimensionCoordinate = collections.namedtuple('DimensionCoordinate',
+                                            ['standard_name', 'units', 'points'])
 '''
 
 end_dictionary = '''
@@ -203,6 +208,149 @@ class CFFieldcodeMapping(Mapping):
             typematch = False
         return typematch
 
+class Grib1LocalCFParamMapping(Mapping):
+    """
+    a mapping object, obtained from the metarelate repository
+    defining a GRIB1 parameter source concept, a CF parameter
+    target concept and no mapped values
+    
+    """
+    in_file = '../lib/iris/fileformats/grib_cf_map.py'
+    container = '\nGRIB1Local_TO_CF = {'
+    closure = '\n\t}\n'
+    to_sort = True
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.fu_p = fu_p
+    def encode(self):
+        ed, t2version, centre, iparam = self.source.notation()
+        cfsname, lname, units =  self.target.notation()
+        str_elem = '\tG1Lparam({ed}, {t2version}, {centre}, {iParam}): '
+        str_elem += 'CFname({cfsname}, {lname}, {units}),\n'
+        str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
+                                   iParam=iparam,
+                                   cfsname=cfsname, lname=lname, units=units)
+        return str_elem
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, Grib1LocalParamConcept) and \
+            isinstance(target, CFPhenomDefConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
+
+class Grib1LocalCFConstrainedParamMapping(Mapping):
+    """
+    a mapping object, obtained from the metarelate repository
+    defining a GRIB1 parameter source concept, a CF parameter
+    target concept with a constraint coord and no mapped values
+    
+    """
+    in_file = '../lib/iris/fileformats/grib_cf_map.py'
+    container = '\nGRIB1LocalConstrained_TO_CF = {'
+    closure = '\n\t}\n'
+    to_sort = True
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.fu_p = fu_p
+    def encode(self):
+        ed, t2version, centre, iparam = self.source.notation()
+        phenom, con =  self.target.notation()
+        str_elem = '\tG1Lparam({ed}, {t2version}, {centre}, {iParam}): '
+        str_elem += '(CFname({psname}, {plname}, {punits}), '
+        str_elem += 'DimensionCoordinate({csname}, {cunits}, [{cpoints}])),\n'
+        str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
+                                   iParam=iparam, psname=phenom['cfsn'],
+                                   plname='None', punits=phenom['units'],
+                                   csname=con['cfsn'], cunits=con['units'],
+                                   cpoints=con['points'])
+        return str_elem
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, Grib1LocalParamConcept) and \
+            isinstance(target, CFConstrainedPhenomDefConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
+
+
+## no GRIB1 save capability
+class CFGrib1LocalParamMapping(Mapping):
+    """
+    a mapping object, obtained from the metarelate repository
+    defining a source concept, a target concept and any mapped values
+    
+    """
+    in_file = '../lib/iris/fileformats/grib_cf_map.py'
+    container = '\nCF_TO_GRIB1Local = {'
+    closure = '\n\t}\n'
+    to_sort = True
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.valuemaps = amap.get('mr:hasValueMaps', [])
+        self.fu_p = fu_p
+    def encode(self):
+        ed, t2version, centre, iparam = self.target.notation()
+        cfsname, lname, units =  self.source.notation()
+        str_elem = '\tCFname({cfsname}, {lname}, {units}):'
+        str_elem += 'G1Lparam({ed}, {t2version}, {centre}, {iParam}),\n'
+        str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
+                                   iParam=iparam,
+                                   cfsname=cfsname, lname=lname, units=units)
+        return str_elem
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, CFPhenomDefConcept) and \
+            isinstance(target, Grib1LocalParamConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
+
+class CFConstrainedGrib1LocalParamMapping(Mapping):
+    """
+    a mapping object, obtained from the metarelate repository
+    defining a source concept, a target concept and any mapped values
+    
+    """
+    in_file = '../lib/iris/fileformats/grib_cf_map.py'
+    container = '\nCFConstrained_TO_GRIB1Local = {'
+    closure = '\n\t}\n'
+    to_sort = True
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.valuemaps = amap.get('mr:hasValueMaps', [])
+        self.fu_p = fu_p
+    def encode(self):
+        ed, t2version, centre, iparam = self.target.notation()
+        phenom, con =  self.source.notation()
+        str_elem = '(CFname({psname}, {plname}, {punits}), '
+        str_elem += 'DimensionCoordinate({csname}, {cunits}, [{cpoints}])): '
+        str_elem += 'G1Lparam({ed}, {t2version}, {centre}, {iParam}),\n'
+        str_elem = str_elem.format(ed=ed, t2version=t2version, centre=centre,
+                                   iParam=iparam, psname=phenom['cfsn'],
+                                   plname='None', punits=phenom['units'],
+                                   csname=con['cfsn'], cunits=con['units'],
+                                   cpoints=con['points'])
+        return str_elem
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, CFConstrainedPhenomDefConcept) and \
+            isinstance(target, Grib1LocalParamConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
+
+
+
+
 class Grib2CFParamMapping(Mapping):
     """
     a mapping object, obtained from the metarelate repository
@@ -341,10 +489,9 @@ def make_mapping(mapping, fu_p):
             built_mappings.append(mapping_type(mapping, source, target, fu_p))
     if len(built_mappings) != 1:
         if len(built_mappings) == 0:
-            #print source
-            #print target
-            #print ''
-            #raise ValueError('no matching Mapping type found')
+            print 'source: ', source
+            print 'target: ', target
+#            raise ValueError('no matching Mapping type found')
             built_mappings = [None]
         else:
             raise ValueError('multiple matching Mapping types found')
@@ -509,6 +656,69 @@ class CFPhenomDefConcept(Concept):
             phenom = False
         return phenom
 
+class CFConstrainedPhenomDefConcept(Concept):
+    """
+    a concept which is defining a CF Field's base phenomenon and
+    one constraining coordinate
+    
+    """
+    def __init__(self, definition, fu_p):
+        self.fformat = definition['mr:hasFormat']
+        self.components = definition['mr:hasComponent']
+        self.id = definition['component']
+        self.fu_p = fu_p
+    def notation(self, direction=None):
+        phenom = None
+        constraint = None
+        for comp in self.components:
+            points = None
+            cfsn = None
+            units = None
+            for p in comp.get('mr:hasProperty', []):
+                if moq.get_label(self.fu_p, p.get('mr:name')) == '"standard_name"':
+                    cfsn = moq.get_label(self.fu_p, p.get('rdf:value'))
+                    if cfsn.startswith('<'):
+                        cfsn = None
+                elif moq.get_label(self.fu_p, p.get('mr:name')) == '"units"':
+                    units = moq.get_label(self.fu_p, p.get('rdf:value'))
+                elif moq.get_label(self.fu_p, p.get('mr:name')) == '"points"':
+                    points = moq.get_label(self.fu_p, p.get('rdf:value'))
+            if points and cfsn and units:
+                constraint = {'cfsn':cfsn, 'units':units, 'points':points}
+            else:
+                phenom = {'cfsn':cfsn, 'units':units}
+        return phenom, constraint
+    @staticmethod
+    def type_match(definition, fu_p):
+        fformat = '<http://www.metarelate.net/metOcean/format/cf>'
+        ff = definition['mr:hasFormat'] == fformat
+        properties = definition.get('mr:hasProperty', [])
+        components = definition.get('mr:hasComponent', [])
+        phenom = False
+        constraint = False
+        if ff and len(properties) == 0 and len(components) == 2:
+            define = {}
+            for comp in components:
+                properties = comp.get('mr:hasProperty', [])
+                for prop in properties:
+                    op = prop.get('mr:operator')
+                    name = prop.get('mr:name', '')
+                    value = prop.get('rdf:value')
+                    if op and value and op == OPEQ:
+                        name_label = moq.get_label(fu_p, name)
+                        value_label = moq.get_label(fu_p, value)
+                        if not define.get(name_label):
+                            define[name_label] = value_label
+                preq = set(('"units"', '"type"', '"standard_name"'))
+                creq = set(('"units"', '"type"', '"standard_name"', '"points"'))
+                if set(define.keys()) == preq:
+                    phenom = True
+                elif set(define.keys()) == creq:
+                    constraint = True
+        con_phenom = phenom and constraint
+        return con_phenom
+
+
 def _cfprop(props, fu_p, eq):
     """
     """
@@ -595,7 +805,8 @@ class CFConcept(Concept):
         fformat = '<http://www.metarelate.net/metOcean/format/cf>'
         ff = definition['mr:hasFormat'] == fformat
         pd =  CFPhenomDefConcept.type_match(definition, fu_p)
-        if ff and not pd:
+        pcd = CFConstrainedPhenomDefConcept.type_match(definition, fu_p)
+        if ff and not pd and not pcd:
             cfc = True
         else:
             cfc = False
@@ -647,13 +858,54 @@ class GribConcept(Concept):
         ff = definition['mr:hasFormat'] == fformat
         components = definition.get('mr:hasComponent', [])
         g2param = Grib2ParamConcept.type_match(definition, fu_p)
-        if ff and len(components) == 0 and not g2param:
+        g1lparam = Grib1LocalParamConcept.type_match(definition, fu_p)
+        if ff and len(components) == 0 and not g2param and not g1lparam:
             grib_c = True
         else:
             grib_c = False
         return grib_c
 
-    
+class Grib1LocalParamConcept(Concept):
+    """
+    a concept which is only defining a GRIB1 local parameter code
+    ed, t2version, centre, iparam = self.source.notation()
+    """
+    def __init__(self, definition, fu_p):
+        self.fformat = definition['mr:hasFormat']
+        self.properties = definition['mr:hasProperty']
+        self.id = definition['component']
+        self.fu_p = fu_p
+    def notation(self, direction=None):
+        for prop in self.properties:
+            name = prop.get('mr:name', '')
+            if name == '<http://def.ecmwf.int/api/grib/keys/editionNumber>':
+                ed = prop.get('rdf:value')
+            elif name == '<http://def.ecmwf.int/api/grib/keys/table2Version>':
+                t2version = prop.get('rdf:value')
+            elif name == '<http://def.ecmwf.int/api/grib/keys/centre>':
+                centre = prop.get('rdf:value')
+            elif name == '<http://def.ecmwf.int/api/grib/keys/indicatorOfParameter>':
+                iparam = prop.get('rdf:value')
+        return ed, t2version, centre, iparam
+    @staticmethod
+    def type_match(definition, fu_p):
+        fformat = '<http://www.metarelate.net/metOcean/format/grib>'
+        ed = '<http://def.ecmwf.int/api/grib/keys/editionNumber>'
+        t2version = '<http://def.ecmwf.int/api/grib/keys/table2Version>'
+        centre = '<http://def.ecmwf.int/api/grib/keys/centre>'
+        iparam = '<http://def.ecmwf.int/api/grib/keys/indicatorOfParameter>'
+        ff = definition['mr:hasFormat'] == fformat
+        properties = definition.get('mr:hasProperty', [])
+        components = definition.get('mr:hasComponent', [])
+        def_keys = set([p.get('mr:name', '') for p in properties])
+        param_keys = set((ed, t2version, centre, iparam))
+        # if ff and len(components) == 0 and set([(p.get('mr:name', ''), p.get('rdf:value', '')) for p in properties]).issuperset(set([(ed, '1')])):
+        #     pdb.set_trace()
+        if ff and len(components) == 0 and def_keys == param_keys:
+            grib1lparam = True
+        else:
+            grib1lparam = False
+        return grib1lparam
 
 class Grib2ParamConcept(Concept):
     """
@@ -711,7 +963,9 @@ def make_concept(definition, fu_p):
             #raise ValueError(ec)
             built_concepts = [None]
         else:
-            raise ValueError('multiple matching Concept types found')
+            ec = 'multiple matching Concept types found\n {}'
+            ec = ec.format(built_concepts)
+            raise ValueError(ec)
             built_concepts = [None]
     return built_concepts[0]
 
