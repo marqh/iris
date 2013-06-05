@@ -73,7 +73,9 @@ end_dictionary = '''
 
 BUILT_FILES = {'../lib/iris/fileformats/um_cf_map.py': [icol, cf_tuple_def],
                '../lib/iris/fileformats/grib/_grib_cf_map.py': [icol, grib_tuple_def,
-                                                          cf_tuple_def],}
+                                                          cf_tuple_def],
+                '../lib/iris/fileformats/grib/loading_rules.py':[],
+                '../lib/iris/fileformats/grib/saving_rules.py':[]}
 
 
 def str_line_sort(st):
@@ -153,7 +155,8 @@ def main():
             print 'imp make_mappings: {} s'.format(int(makem_time-ret_time))
             imp_maps.sort(key=type)
             for g_type, group in itertools.groupby(imp_maps, key=type):
-                format_maps[fformat]['import'][g_type.__name__] = list(group)
+                # format_maps[fformat]['import'][g_type.__name__] = list(group)
+                format_maps[fformat]['import'][g_type] = list(group)
             ret_start_time = time()
             exports = fu_p.retrieve_mappings(iris_format, fformat)
             ret_time = time()
@@ -163,7 +166,8 @@ def main():
             print 'exp make_mappings: {} s'.format(int(makem_time-ret_time))
             exp_maps.sort(key=type)
             for g_type, group in itertools.groupby(exp_maps, key=type):
-                format_maps[fformat]['export'][g_type.__name__] = list(group)
+                # format_maps[fformat]['export'][g_type.__name__] = list(group)
+                format_maps[fformat]['export'][g_type] = list(group)
             ftime = time()
             
             print len(imports), ' imports, ', len(exports), 'exports'
@@ -175,13 +179,15 @@ def main():
             for extras in BUILT_FILES[afile]:
                 f.write(extras)
             f.close()
-
+        # create iris ouput for each fformat and direction
         for fformat in formats:
             for direction in ['import', 'export']:
+                # ports is the collection of format and direction specific
+                # mapping rule types; each type is handled individually
                 ports = format_maps[fformat][direction]
                 for map_set in ports:
-                    print direction
-                    print map_set
+                    print 'direction: ', direction
+                    print 'map_set: ', map_set
                     if map_set == 'NoneType':
                         ec = 'Some {} {} mappings not categorised'
                         ec = ec.format(fformat, direction)
@@ -191,17 +197,32 @@ def main():
                             ec = '{} writing to unmanaged file {}'
                             ec = ec.format(map_set, ports[map_set][0].in_file)
                             raise ValueError(ec)
-                        map_str = ''
-                        for port_mappings in ports[map_set]:
-                            map_str += port_mappings.encode()
-                        if ports[map_set][0].to_sort:
-                            map_str = dict_line_sort(map_str)
-                        if ports[map_set][0].container:
-                            map_str = ports[map_set][0].container + map_str
-                        if ports[map_set][0].closure:
-                            map_str += ports[map_set][0].closure
-                        with open(ports[map_set][0].in_file, 'a') as in_file:
-                            in_file.write(map_str)
+                        map_strs = {}
+                        out_str = ''
+                        # sets to check properties of each mapping for encoding
+                        # behaviour
+                        for port_mapping in ports[map_set]:
+                            # current_str = map_strs.get(map_set.container, '')
+                            current_str = map_strs.get(port_mapping.container, '')
+                            new_str = current_str + port_mapping.encode()
+                            # map_strs[map_set.container] = new_str
+                            map_strs[port_mapping.container] = new_str
+                        if map_set.to_sort:
+                            for key in map_strs:
+                                map_strs[key] = dict_line_sort(map_strs[key])
+                        # if map_set.container:
+                        #     map_str = map_set.container + map_str
+                        if map_set.closure:
+                            for key in map_strs:
+                                map_strs[key] += map_set.closure
+                        keys = list(map_strs.iterkeys())
+                        keys.sort()
+                        for key in keys:
+                            out_str += key
+                            out_str += map_strs[key]
+                            out_str += '\n\n'
+                        with open(map_set.in_file, 'a') as in_file:
+                            in_file.write(out_str)
             fftime = time()
             print fformat, ' writing: ', str(int(fftime - ftime)), 's'
             ftime = fftime

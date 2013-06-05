@@ -55,6 +55,19 @@ class Mapping(object):
         return NotImplemented
     def type_match(definition):
         return NotImplemented
+    def _pyrules(self, test, assign):
+        encoding = '\n    if {}:'.format(test)
+        encoding += '\n        id = "{}"'.format(self.mapping_id)
+        encoding += '\n        '
+        #if self.valuemaps:
+            #for vmap in self.valuemaps:
+            #    print vmap
+            #encoding += cfassign.format()
+        #else:
+        encoding += assign
+        encoding += '\n'
+        return encoding
+
 
 
 class StashCFMapping(Mapping):
@@ -361,4 +374,81 @@ class CFGrib2ParamMapping(Mapping):
             typematch = False
         return typematch
 
+
+class CFGribMapping(Mapping):
+    """
+    """
+    in_file = '../lib/iris/fileformats/grib/saving_rules.py'
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.valuemaps = amap.get('mr:hasValueMaps', [])
+        self.mapping_id = amap.get('mapping')
+        if self.source.mediator:
+            container_func = self.source.mediator.split('/')[-1].strip('>')
+            self.container = 'def {}(cube):'.format(container_func)
+        else:
+            self.container = 'def translate(cube):'
+        self.fu_p = fu_p
+    def encode(self):
+        cftest = self.source.notation('test')
+        gribassign = self.target.notation('assign')
+        encoding = self._pyrules(cftest, gribassign)
+        # encoding = self.mapping_id.split('/')[-1].strip('>')
+        # encoding += '\n    foreach'
+        # encoding += cftest
+        # encoding += '\n    assert'
+        # encoding += gribassign#.format
+        # encoding += '\n\n'
+        return encoding
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, CFConcept) and \
+            isinstance(target, GribConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
+
+
+
+
+class GribCFMapping(Mapping):
+    """
+    """
+    in_file = '../lib/iris/fileformats/grib/loading_rules.py'
+    container = 'def translate(grib):'
+    def __init__(self, amap, source, target, fu_p):
+        self.source = source
+        self.target = target
+        self.valuemaps = amap.get('mr:hasValueMap', [])
+        self.mapping_id = amap.get('mapping')
+        if self.target.mediator:
+            container_func = self.target.mediator.split('/')[-1].strip('>')
+            self.container = 'def {}(agrib):'.format(container_func)
+        else:
+            self.container = 'def translate(agrib):'
+        self.fu_p = fu_p
+    def encode(self):
+        gribtest = self.source.notation('test')
+        cfassign = self.target.notation('assign')
+        encoding = self._pyrules(gribtest, cfassign)
+        # encoding = '\n    if {}:'.format(gribtest)
+        # encoding += "        id = '{}'".format(self.mapping_id)
+        # #if self.valuemaps:
+        #     #for vmap in self.valuemaps:
+        #     #    print vmap
+        #     #encoding += cfassign.format()
+        # #else:
+        # encoding += cfassign
+        # encoding += '\n'
+        return encoding
+    @staticmethod
+    def type_match(source, target):
+        if isinstance(source, GribConcept) and \
+            isinstance(target, CFConcept):
+            typematch = True
+        else:
+            typematch = False
+        return typematch
 

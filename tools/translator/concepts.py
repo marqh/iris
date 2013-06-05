@@ -20,6 +20,8 @@ import metocean.queries as moq
 
 OPEQ = '<http://www.openmath.org/cd/relation1.xhtml#eq>'
 
+MED = '<http://www.metarelate.net/metOcean/mediates'
+
 def make_concept(definition, fu_p):
     """
     Concept object factory
@@ -278,7 +280,7 @@ class CFConstrainedPhenomDefConcept(Concept):
         return con_phenom
 
 
-def _cfprop(props, fu_p, eq):
+def _cfprop(props, fu_p, eq, c_id):
     """
     """
     t_str = ''
@@ -292,7 +294,9 @@ def _cfprop(props, fu_p, eq):
         #    print prop
         elif prop.get('mr:hasComponent'):
             comp = prop.get('mr:hasComponent')
-            comp_notation = _cfprop(comp.get('mr:hasProperty'), fu_p, eq)
+            subc_id = comp['component']
+            comp_notation = _cfprop(comp.get('mr:hasProperty'),
+                                    fu_p, eq, subc_id)
             name = moq.get_label(fu_p, prop.get('mr:name', ''))
             name = name.strip('"')
             elem_str += '{} {} {},'.format(name, eq, comp_notation)
@@ -301,11 +305,17 @@ def _cfprop(props, fu_p, eq):
             name = name.strip('"')
             val = moq.get_label(fu_p, prop.get('rdf:value', ''))
             if val:
-                elem_str += '{} {} {},'.format(name, eq, val)
+                if val.startswith(MED):
+                    func = val.strip('>').split('/')[-1]
+                    elem_str += '{} {} {}(), '.format(name, eq, func)
+                else:
+                    elem_str += '{} {} {}, '.format(name, eq, val)
             else:
-                elem_str += '%s %s {%s},' % (name, eq, name)
+                elem_str += '%s %s {%s.%s}, ' % (name, eq, c_id, name)
     p_str = t_str + elem_str + ')'
     return p_str
+
+
 
 class CFConcept(Concept):
     """
@@ -316,6 +326,13 @@ class CFConcept(Concept):
         self.properties = definition.get('mr:hasProperty', [])
         self.components = definition.get('mr:hasComponent', [])
         self.id = definition['component']
+        mediator = definition.get('dc:mediator', [])
+        if len(mediator) > 1:
+            raise ValueError('multiple mediators found {}'.format(definition))
+        elif len(mediator) == 0:
+            self.mediator = None
+        else:
+            self.mediator = mediator[0]
         self.fu_p = fu_p
     def notation(self, direction):
         # prop_notation = ''
@@ -323,29 +340,39 @@ class CFConcept(Concept):
         eq = '='
         if direction == 'test':
             if len(self.components) == 0:
-                prop_notation = '\n        engine.cube.{}'.format(_cfprop(self.properties, self.fu_p, eq))
+                prop_notation = 'cube.{}'.format(_cfprop(self.properties,
+                                                         self.fu_p, eq, self.id))
             elif len(self.properties) == 0:
-                prop_notation = ''
+                props = []
                 for comp in self.components:
-                    prop_notation += '\n        engine.cube.'
-                    props = comp.get('mr:hasProperty')
-                    if props:
-                        prop_notation += _cfprop(props, self.fu_p, eq) 
-                prop_notation += ')'
+                    prop = 'cube.'
+                    properties = comp.get('mr:hasProperty')
+                    if properties:
+                        c_id = comp['component']
+                        prop += _cfprop(properties, self.fu_p, eq, c_id)
+                    props.append(prop)
+                prop_notation = ' and \\\n       '.join(props)
             else:
                 raise ValueError('components and properties cannot coexist on',
                                  ' a cf concept')
         elif direction == 'assign':
             if len(self.components) == 0:
-                prop_notation = '\n        python engine.bucket.append({})'.format(_cfprop(self.properties, self.fu_p, eq))
+                prop = 'cube_comps.append({})'
+                prop_notation = prop.format(_cfprop(self.properties, self.fu_p,
+                                                    eq, self.id))
+                # props.append(propn)
+                # prop_notation = '\n        '.join(props)
             elif len(self.properties) == 0:
-                prop_notation = ''
+                props = []
                 for comp in self.components:
-                    prop_notation += '\n        python engine.bucket.append('
-                    props = comp.get('mr:hasProperty')
-                    if props:
-                        prop_notation += _cfprop(props, self.fu_p, eq) 
-                prop_notation += ')'
+                    cpropn = 'cube_comps.append({})'
+                    properties = comp.get('mr:hasProperty')
+                    if properties:
+                        c_id = comp['component']
+                        cpropn = cpropn.format(_cfprop(properties,
+                                                       self.fu_p, eq, c_id))
+                    props.append(cpropn)
+                prop_notation = '\n        '.join(props)
             else:
                 raise ValueError('components and properties cannot coexist on',
                                  ' a cf concept')
@@ -361,7 +388,81 @@ class CFConcept(Concept):
         else:
             cfc = False
         return cfc
-    
+
+    ####
+
+
+
+# class CFMediatesConcept(Concept):
+#     """
+#     a cf concept which provides information for other concepts
+#     """
+#     def __init__(self, definition, fu_p):
+#         self.fformat = definition['mr:hasFormat']
+#         self.properties = definition.get('mr:hasProperty', [])
+#         self.components = definition.get('mr:hasComponent', [])
+#         self.id = definition['component']
+#         self.fu_p = fu_p
+#         self.mediates = definition.get('dc:mediates')
+#     def notation(self, direction):
+#         # prop_notation = ''
+#         # assign_keys = []
+#         eq = '='
+#         if direction == 'test':
+#             if len(self.components) == 0:
+#                 prop_notation = 'cube.{}'.format(_cfprop(self.properties,
+#                                                          self.fu_p, eq, self.id))
+#             elif len(self.properties) == 0:
+#                 props = []
+#                 for comp in self.components:
+#                     prop = 'cube.'
+#                     properties = comp.get('mr:hasProperty')
+#                     if properties:
+#                         c_id = comp['component']
+#                         prop += _cfprop(properties, self.fu_p, eq, c_id)
+#                     props.append(prop)
+#                 prop_notation = ' and \\\n       '.join(props)
+#             else:
+#                 raise ValueError('components and properties cannot coexist on',
+#                                  ' a cf concept')
+#         elif direction == 'assign':
+#             if len(self.components) == 0:
+#                 prop = 'cube_comps.append({})'
+#                 prop_notation = prop.format(_cfprop(self.properties, self.fu_p,
+#                                                     eq, self.id))
+#                 # props.append(propn)
+#                 # prop_notation = '\n        '.join(props)
+#             elif len(self.properties) == 0:
+#                 props = []
+#                 for comp in self.components:
+#                     cpropn = 'cube_comps.append({})'
+#                     properties = comp.get('mr:hasProperty')
+#                     if properties:
+#                         c_id = comp['component']
+#                         cpropn = cpropn.format(_cfprop(properties,
+#                                                        self.fu_p, eq, c_id))
+#                     props.append(cpropn)
+#                 prop_notation = '\n        '.join(props)
+#             else:
+#                 raise ValueError('components and properties cannot coexist on',
+#                                  ' a cf concept')
+#         return prop_notation
+#     @staticmethod
+#     def type_match(definition, fu_p):
+#         fformat = '<http://www.metarelate.net/metOcean/format/cf>'
+#         ff = definition['mr:hasFormat'] == fformat
+#         # at present the interface does not allow a sub-component
+#         # to act as a mediator
+#         components = definition.get('mr:hasComponent', [])
+#         provides = definition.get('dc:mediator')
+#         if ff and provides:
+#             cfc = True
+#         else:
+#             cfc = False
+#         return cfc
+
+
+#     ####
         
 class GribConcept(Concept):
     """
@@ -374,7 +475,7 @@ class GribConcept(Concept):
         self.id = definition['component']
         self.fu_p = fu_p
     def notation(self, direction):
-        prop_notation = ''
+        props = []#''
 #        assign_keys = []
         for prop in self.properties:
             name = moq.get_label(self.fu_p, prop.get('mr:name'))
@@ -382,20 +483,28 @@ class GribConcept(Concept):
             op = prop.get('mr:operator') == OPEQ
             val = prop.get('rdf:value')
             n = ''
+            if direction == 'test':
+                joiner = ' and \\\n       '
+            elif direction == 'assign':
+                joiner = '\n        '
+            else:
+                msg = 'direction must be assign or test, not{}'
+                raise ValueError(msg.format(direction))
             if name and op and val:
                 if direction == 'test':
-                    n = '\n        factbase.{}({})'.format(name, val)
+                    n = 'agrib.{} == {}'.format(name, val)
                 elif direction == 'assign':
-                    n = '\n        python engine.agrib.{} = {}'.format(name, val)
+                    n = 'agrib.{} = {}'.format(name, val)
                 
             elif name:
                 if direction == 'test':
-                    n = '\n        factbase.{}'.format(name)
+                    n = 'agrib.{}'.format(name)
                 elif direction == 'assign':
-                    n = '\n        python engine.agrib.{}'.format(name)
+                    n = 'agrib.{}'.format(name)
                     n += ' = {%s} ' % prop.get('mr:name')
 #                    assign_keys.append(prop.get('mr:name'))
-            prop_notation += n
+            props.append(n)
+        prop_notation = joiner.join(props)
         if direction == 'test':
             r_val = prop_notation
         elif direction == 'assign':
