@@ -27,6 +27,7 @@ from iris.exceptions import NotYetImplementedError
 from iris.fileformats.manager import DataManager
 import pp
 
+IMDI = -32768
 
 FF_HEADER_DEPTH = 256      # In words (64-bit).
 DEFAULT_FF_WORD_DEPTH = 8  # In bytes.
@@ -136,6 +137,26 @@ class FFHeader(object):
                 else:
                     value = header_data[offsets[0]:offsets[-1] + 1]
                 setattr(self, name, value)
+            for elem in _FF_HEADER_POINTERS:
+                if elem != 'data' and elem != 'lookup_table':
+                    addr = getattr(self, elem)
+                    if addr[0] != IMDI:
+                        ff_file.seek((addr[0] - 1) *word_depth)
+                        if len(addr) == 2:
+                            vals = np.fromfile(ff_file,
+                                              dtype='>f{0}'.format(word_depth),
+                                              count=addr[1])
+                        elif len(addr) == 3:
+                            vals = np.fromfile(ff_file,
+                                              dtype='>f{0}'.format(word_depth),
+                                              count=addr[1]*addr[2])
+                            vals = vals.reshape((addr[1], addr[2]), order='F')
+                        else:
+                            raise ValueError('ff header element {} is not handled'
+                                             'correctly'.format(elem))
+                    else:
+                        vals = None
+                    setattr(self, elem, vals)                    
 
     def __str__(self):
         attributes = []
@@ -322,6 +343,36 @@ class FF2PP(object):
             data_depth, data_type = self._payload(field)
             # Determine PP field data shape.
             data_shape = (field.lbrow, field.lbnpt)
+            # print 'data_shape', data_shape
+            # if field.lbrow == 0:
+                # print field.lbuser[3]
+            # set x and y coordinates if they are defined as arrays
+            if self._ff_header.column_dependent_constants is not None:
+                x_p = self._ff_header.column_dependent_constants[:,0]
+                x_u = self._ff_header.column_dependent_constants[:,1]
+                # print len(x_p)
+                if data_shape[1] == len(x_p):
+                    field.x = x_p
+                elif data_shape[1] == len(x_p) - 1:
+                    field.x = x_u[:-1]
+                elif data_shape[1] == 0:
+                    field.x = []#pass
+                else:
+                    raise ValueError('data shape does not match'
+                                     ' x coordiante array')
+            if self._ff_header.row_dependent_constants is not None:
+                y_p = self._ff_header.row_dependent_constants[:,0]
+                y_v = self._ff_header.row_dependent_constants[:,1]
+                # print len(y_p)
+                if data_shape[0] == len(y_p):
+                    field.y = y_p
+                elif data_shape[0] == len(y_p) - 1:
+                    field.y = y_v[:-1]
+                elif data_shape[0] == 0:
+                    field.y = []#pass
+                else:
+                    raise ValueError('data shape does not match'
+                                     ' y coordiante array')
             # Determine whether to read the associated PP field data.
             if self._read_data:
                 # Move file pointer to the start of the current PP field data.
