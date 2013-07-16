@@ -140,8 +140,12 @@ class FFHeader(object):
             for elem in _FF_HEADER_POINTERS:
                 if elem != 'data' and elem != 'lookup_table':
                     addr = getattr(self, elem)
-                    if addr[0] != IMDI:
-                        ff_file.seek((addr[0] - 1) *word_depth)
+                    if addr[0] not in [0, IMDI]:
+                        # print elem
+                        # print addr
+                        # import pdb
+                        # pdb.set_trace()
+                        ff_file.seek((addr[0] - 1) * word_depth)
                         if len(addr) == 2:
                             vals = np.fromfile(ff_file,
                                               dtype='>f{0}'.format(word_depth),
@@ -343,14 +347,11 @@ class FF2PP(object):
             data_depth, data_type = self._payload(field)
             # Determine PP field data shape.
             data_shape = (field.lbrow, field.lbnpt)
-            # print 'data_shape', data_shape
-            # if field.lbrow == 0:
-                # print field.lbuser[3]
             # set x and y coordinates if they are defined as arrays
             if self._ff_header.column_dependent_constants is not None:
                 x_p = self._ff_header.column_dependent_constants[:,0]
                 x_u = self._ff_header.column_dependent_constants[:,1]
-                # print len(x_p)
+                # infer whether the field is on p or u point with respect to x
                 if data_shape[1] == len(x_p):
                     field.x = x_p
                 elif data_shape[1] == len(x_p) - 1:
@@ -363,7 +364,7 @@ class FF2PP(object):
             if self._ff_header.row_dependent_constants is not None:
                 y_p = self._ff_header.row_dependent_constants[:,0]
                 y_v = self._ff_header.row_dependent_constants[:,1]
-                # print len(y_p)
+                # infer whether the field is on p or v point with respect to y
                 if data_shape[0] == len(y_p):
                     field.y = y_p
                 elif data_shape[0] == len(y_p) - 1:
