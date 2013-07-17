@@ -139,12 +139,8 @@ class FFHeader(object):
                 setattr(self, name, value)
             for elem in _FF_HEADER_POINTERS:
                 if elem != 'data' and elem != 'lookup_table':
-                    addr = getattr(self, elem)
-                    if addr[0] not in [0, IMDI]:
-                        # print elem
-                        # print addr
-                        # import pdb
-                        # pdb.set_trace()
+                    if self.valid(elem):
+                        addr = getattr(self, elem)
                         ff_file.seek((addr[0] - 1) * word_depth)
                         if len(addr) == 2:
                             vals = np.fromfile(ff_file,
@@ -156,8 +152,8 @@ class FFHeader(object):
                                               count=addr[1]*addr[2])
                             vals = vals.reshape((addr[1], addr[2]), order='F')
                         else:
-                            raise ValueError('ff header element {} is not handled'
-                                             'correctly'.format(elem))
+                            raise ValueError('ff header element {} is not'
+                                             'handled correctly'.format(elem))
                     else:
                         vals = None
                     setattr(self, elem, vals)                    
@@ -187,7 +183,11 @@ class FFHeader(object):
         """
 
         if name in _FF_HEADER_POINTERS:
-            value = getattr(self, name)[0] > _FF_HEADER_POINTER_NULL
+            attr = getattr(self, name)
+            positive = attr[0] > _FF_HEADER_POINTER_NULL
+            pointer_type = isinstance(attr, tuple)
+            missing = attr[0] != IMDI
+            value = positive and pointer_type and missing
         else:
             msg = '{!r} object does not have pointer attribute {!r}'
             raise AttributeError(msg.format(self.__class__.__name__, name))
