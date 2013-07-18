@@ -97,7 +97,7 @@ class TestVarResFFLoad(tests.IrisTest):
         cy = cubes[0].coord('grid_latitude').points
         self.assertArrayEqual(cx, px)
         self.assertArrayEqual(cy, py)
-        
+
 
 @iris.tests.skip_data
 class TestFFieee32(tests.IrisTest):
