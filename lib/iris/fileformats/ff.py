@@ -143,20 +143,20 @@ class FFHeader(object):
                         addr = getattr(self, elem)
                         ff_file.seek((addr[0] - 1) * word_depth)
                         if len(addr) == 2:
-                            vals = np.fromfile(ff_file,
+                            res = np.fromfile(ff_file,
                                               dtype='>f{0}'.format(word_depth),
                                               count=addr[1])
                         elif len(addr) == 3:
-                            vals = np.fromfile(ff_file,
+                            res = np.fromfile(ff_file,
                                               dtype='>f{0}'.format(word_depth),
                                               count=addr[1]*addr[2])
-                            vals = vals.reshape((addr[1], addr[2]), order='F')
+                            res = res.reshape((addr[1], addr[2]), order='F')
                         else:
                             raise ValueError('ff header element {} is not'
                                              'handled correctly'.format(elem))
                     else:
-                        vals = None
-                    setattr(self, elem, vals)                    
+                        res = None
+                    setattr(self, elem, res)
 
     def __str__(self):
         attributes = []
@@ -349,28 +349,28 @@ class FF2PP(object):
             data_shape = (field.lbrow, field.lbnpt)
             # set x and y coordinates if they are defined as arrays
             if self._ff_header.column_dependent_constants is not None:
-                x_p = self._ff_header.column_dependent_constants[:,0]
-                x_u = self._ff_header.column_dependent_constants[:,1]
+                x_p = self._ff_header.column_dependent_constants[:, 0]
+                x_u = self._ff_header.column_dependent_constants[:, 1]
                 # infer whether the field is on p or u point with respect to x
                 if data_shape[1] == len(x_p):
                     field.x = x_p
                 elif data_shape[1] == len(x_p) - 1:
                     field.x = x_u[:-1]
                 elif data_shape[1] == 0:
-                    field.x = []#pass
+                    field.x = []
                 else:
                     raise ValueError('data shape does not match'
                                      ' x coordiante array')
             if self._ff_header.row_dependent_constants is not None:
-                y_p = self._ff_header.row_dependent_constants[:,0]
-                y_v = self._ff_header.row_dependent_constants[:,1]
+                y_p = self._ff_header.row_dependent_constants[:, 0]
+                y_v = self._ff_header.row_dependent_constants[:, 1]
                 # infer whether the field is on p or v point with respect to y
                 if data_shape[0] == len(y_p):
                     field.y = y_p
                 elif data_shape[0] == len(y_p) - 1:
                     field.y = y_v[:-1]
                 elif data_shape[0] == 0:
-                    field.y = []#pass
+                    field.y = []
                 else:
                     raise ValueError('data shape does not match'
                                      ' y coordiante array')
