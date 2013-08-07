@@ -81,7 +81,8 @@ class TestFF2PP2Cube(tests.IrisTest):
 
 class TestVarResFFLoad(tests.IrisTest):
     def setUp(self):
-        self.filename = tests.get_data_path(('FF', 'Scrt_20130717.ff'))
+        #self.filename = tests.get_data_path(('FF', 'Scrt_20130717.ff'))
+        self.filename = tests.get_data_path(('FF', 'ukvtuv.T+0'))
 
     def test_variable_resolution(self):
         """test that the variable resolution x and y coordinates are
@@ -89,14 +90,20 @@ class TestVarResFFLoad(tests.IrisTest):
 
         """
         ukv = ff.FF2PP(self.filename)
-        ukv1 = iter(ukv).next()
-        px = ukv1.x
-        py = ukv1.y
         cubes = iris.load(self.filename)
-        cx = cubes[0].coord('grid_longitude').points
-        cy = cubes[0].coord('grid_latitude').points
-        self.assertArrayEqual(cx, px)
-        self.assertArrayEqual(cy, py)
+        theta, = cubes.extract('air_potential_temperature')
+        u, = cubes.extract('eastward_wind')
+        v, = cubes.extract('northward_wind')
+        x_u = u.coord('grid_longitude').points
+        y_u = u.coord('grid_latitude').points
+        x_v = v.coord('grid_longitude').points
+        y_v = v.coord('grid_latitude').points
+        x_p = theta.coord('grid_longitude').points
+        y_p = theta.coord('grid_latitude').points
+        self.assertArrayEqual(y_u, y_p)
+        self.assertArrayEqual(x_v, x_p)
+        self.assertNotEqual(x_u[0], x_p[0])
+        self.assertNotEqual(y_v[0], y_p[0])
 
 
 @iris.tests.skip_data

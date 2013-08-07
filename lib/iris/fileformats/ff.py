@@ -26,6 +26,7 @@ import numpy as np
 from iris.exceptions import NotYetImplementedError
 from iris.fileformats.manager import DataManager
 import pp
+import ff_xrefs
 
 IMDI = -32768
 
@@ -348,32 +349,47 @@ class FF2PP(object):
             # Determine PP field data shape.
             data_shape = (field.lbrow, field.lbnpt)
             # set x and y coordinates if they are defined as arrays
+            grid = ff_xrefs.stash_refs[field.stash.__str__()]['Grid']
             if self._ff_header.column_dependent_constants is not None:
                 x_p = self._ff_header.column_dependent_constants[:, 0]
                 x_u = self._ff_header.column_dependent_constants[:, 1]
-                # infer whether the field is on p or u point with respect to x
-                if data_shape[1] == len(x_p):
-                    field.x = x_p
-                elif data_shape[1] == len(x_p) - 1:
-                    field.x = x_u[:-1]
-                elif data_shape[1] == 0:
-                    field.x = []
-                else:
-                    raise ValueError('data shape does not match'
-                                     ' x coordiante array')
-            if self._ff_header.row_dependent_constants is not None:
                 y_p = self._ff_header.row_dependent_constants[:, 0]
                 y_v = self._ff_header.row_dependent_constants[:, 1]
-                # infer whether the field is on p or v point with respect to y
-                if data_shape[0] == len(y_p):
+                if grid == 18:
+                    field.x = x_u
                     field.y = y_p
-                elif data_shape[0] == len(y_p) - 1:
+                elif grid == 19:
+                    field.x = x_p
                     field.y = y_v[:-1]
-                elif data_shape[0] == 0:
-                    field.y = []
                 else:
-                    raise ValueError('data shape does not match'
-                                     ' y coordiante array')
+                    field.x = x_p
+                    field.y = y_p
+#             if self._ff_header.column_dependent_constants is not None:
+#                 x_p = self._ff_header.column_dependent_constants[:, 0]
+#                 x_u = self._ff_header.column_dependent_constants[:, 1]
+#                 # infer whether the field is on p or u point with respect to x
+#                 if data_shape[1] == len(x_p):
+#                     field.x = x_p
+#                 elif data_shape[1] == len(x_p) - 1:
+#                     field.x = x_u[:-1]
+#                 elif data_shape[1] == 0:
+#                     field.x = []
+#                 else:
+#                     raise ValueError('data shape does not match'
+#                                      ' x coordiante array')
+#             if self._ff_header.row_dependent_constants is not None:
+#                 y_p = self._ff_header.row_dependent_constants[:, 0]
+#                 y_v = self._ff_header.row_dependent_constants[:, 1]
+#                 # infer whether the field is on p or v point with respect to y
+#                 if data_shape[0] == len(y_p):
+#                     field.y = y_p
+#                 elif data_shape[0] == len(y_p) - 1:
+#                     field.y = y_v[:-1]
+#                 elif data_shape[0] == 0:
+# y                    field.y = []
+#                 else:
+#                     raise ValueError('data shape does not match'
+#                                      ' y coordiante array')
             # Determine whether to read the associated PP field data.
             if self._read_data:
                 # Move file pointer to the start of the current PP field data.
