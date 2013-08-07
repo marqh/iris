@@ -61,7 +61,6 @@ class TestFF_HEADER(tests.IrisTest):
         self.assertEqual(len(ff.FF_HEADER), 31)
 
 
-
 class TestFF2PP2Cube(tests.IrisTest):
     def setUp(self):
         self.filename = tests.get_data_path(('FF', 'n48_multi_field'))
