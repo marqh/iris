@@ -349,7 +349,8 @@ class FF2PP(object):
             # Determine PP field data shape.
             data_shape = (field.lbrow, field.lbnpt)
             # set x and y coordinates if they are defined as arrays
-            grid = ff_xrefs.stash_refs[field.stash.__str__()]['Grid']
+            stash = ff_xrefs.stash_refs.get(field.stash.__str__(), {})
+            grid = stash.get('Grid')
             if self._ff_header.column_dependent_constants is not None:
                 x_p = self._ff_header.column_dependent_constants[:, 0]
                 x_u = self._ff_header.column_dependent_constants[:, 1]
