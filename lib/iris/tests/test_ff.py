@@ -116,8 +116,6 @@ class TestFFHeader(tests.IrisTest):
         self.assertEqual(self.ff_header.data, (2049, 2961, -32768))
 
     def test_str(self):
-        # target = open('results/FF/ffheader', 'r').read()
-        # self.assertEqual(str(self.ff_header), target)
         self.assertString(str(self.ff_header), ('FF', 'ffheader'))
 
     def test_repr(self):
