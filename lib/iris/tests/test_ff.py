@@ -61,6 +61,73 @@ class TestFF_HEADER(tests.IrisTest):
         self.assertEqual(len(ff.FF_HEADER), 31)
 
 
+@iris.tests.skip_data
+class TestFFHeader(tests.IrisTest):
+    def setUp(self):
+        self.filename = tests.get_data_path(('FF', 'n48_multi_field'))
+        self.ff_header = ff.FFHeader(self.filename)
+        self.valid_headers = (
+            'integer_constants', 'real_constants', 'level_dependent_constants',
+            'lookup_table', 'data'
+        )
+        self.invalid_headers = (
+            'row_dependent_constants', 'column_dependent_constants',
+            'fields_of_constants', 'extra_constants', 'temp_historyfile',
+            'compressed_field_index1', 'compressed_field_index2',
+            'compressed_field_index3'
+        )
+
+    def test_constructor(self):
+        """Test FieldsFile header attribute lookup."""
+        self.assertEqual(self.ff_header.data_set_format_version, 20)
+        self.assertEqual(self.ff_header.sub_model, 1)
+        self.assertEqual(self.ff_header.vert_coord_type, 5)
+        self.assertEqual(self.ff_header.horiz_grid_type, 0)
+        self.assertEqual(self.ff_header.dataset_type, 3)
+        self.assertEqual(self.ff_header.run_identifier, 0)
+        self.assertEqual(self.ff_header.experiment_number, -32768)
+        self.assertEqual(self.ff_header.calendar, 1)
+        self.assertEqual(self.ff_header.grid_staggering, 3)
+        self.assertEqual(self.ff_header.time_type, -32768)
+        self.assertEqual(self.ff_header.projection_number, -32768)
+        self.assertEqual(self.ff_header.model_version, 802)
+        self.assertEqual(self.ff_header.obs_file_type, -32768)
+        self.assertEqual(self.ff_header.last_fieldop_type, -32768)
+        self.assertEqual(self.ff_header.first_validity_time,
+                         (2011, 7, 10, 18, 0, 0, 191))
+        self.assertEqual(self.ff_header.last_validity_time,
+                         (2011, 7, 10, 21, 0, 0, 191))
+        self.assertEqual(self.ff_header.misc_validity_time,
+                         (2012, 4, 30, 18, 12, 13, -32768))
+        self.assertEqual(self.ff_header.integer_constants.shape, (46, ))
+        self.assertEqual(self.ff_header.real_constants.shape, (38, ))
+        self.assertEqual(self.ff_header.level_dependent_constants.shape,
+                         (71, 8))
+        self.assertEqual(self.ff_header.row_dependent_constants, None)
+        self.assertEqual(self.ff_header.column_dependent_constants, None)
+        self.assertEqual(self.ff_header.fields_of_constants, None)
+        self.assertEqual(self.ff_header.extra_constants, None)
+        self.assertEqual(self.ff_header.temp_historyfile, None)
+        self.assertEqual(self.ff_header.compressed_field_index1, None)
+        self.assertEqual(self.ff_header.compressed_field_index2, None)
+        self.assertEqual(self.ff_header.compressed_field_index3, None)
+        self.assertEqual(self.ff_header.lookup_table, (909, 64, 5))
+        self.assertEqual(self.ff_header.total_prognostic_fields, 3119)
+        self.assertEqual(self.ff_header.data, (2049, 2961, -32768))
+
+    def test_str(self):
+        # target = open('results/FF/ffheader', 'r').read()
+        # self.assertEqual(str(self.ff_header), target)
+        self.assertString(str(self.ff_header), ('FF', 'ffheader'))
+
+    def test_repr(self):
+        target = "FFHeader('" + self.filename + "')"
+        self.assertEqual(repr(self.ff_header), target)
+
+    def test_shape(self):
+        self.assertEqual(self.ff_header.shape('data'), (2961, -32768))
+
+
 class TestFF2PP2Cube(tests.IrisTest):
     def setUp(self):
         self.filename = tests.get_data_path(('FF', 'n48_multi_field'))
@@ -80,7 +147,6 @@ class TestFF2PP2Cube(tests.IrisTest):
 
 class TestVarResFFLoad(tests.IrisTest):
     def setUp(self):
-        #self.filename = tests.get_data_path(('FF', 'Scrt_20130717.ff'))
         self.filename = tests.get_data_path(('FF', 'ukvtuv.T+0'))
 
     def test_variable_resolution(self):

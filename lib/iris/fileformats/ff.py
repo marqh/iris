@@ -25,8 +25,9 @@ import numpy as np
 
 from iris.exceptions import NotYetImplementedError
 from iris.fileformats.manager import DataManager
+import iris.fileformats.ff_xrefs
 import pp
-import ff_xrefs
+
 
 IMDI = -32768
 
@@ -140,7 +141,7 @@ class FFHeader(object):
                 setattr(self, name, value)
             for elem in _FF_HEADER_POINTERS:
                 if elem != 'data' and elem != 'lookup_table':
-                    if self.valid(elem):
+                    if self._valid(elem):
                         addr = getattr(self, elem)
                         ff_file.seek((addr[0] - 1) * word_depth)
                         if len(addr) == 2:
@@ -168,7 +169,7 @@ class FFHeader(object):
     def __repr__(self):
         return '{}({!r})'.format(type(self).__name__, self.ff_filename)
 
-    def valid(self, name):
+    def _valid(self, name):
         """
         Determine whether the FieldsFile FIXED_LENGTH_HEADER pointer attribute
         has a valid FieldsFile address.
@@ -187,34 +188,34 @@ class FFHeader(object):
             attr = getattr(self, name)
             positive = attr[0] > _FF_HEADER_POINTER_NULL
             pointer_type = isinstance(attr, tuple)
-            missing = attr[0] != IMDI
-            value = positive and pointer_type and missing
+            not_missing = attr[0] != IMDI
+            value = positive and pointer_type and not_missing
         else:
             msg = '{!r} object does not have pointer attribute {!r}'
             raise AttributeError(msg.format(self.__class__.__name__, name))
         return value
 
-    def address(self, name):
-        """
-        Return the byte address of the FieldsFile FIXED_LENGTH_HEADER
-        pointer attribute.
+    # def address(self, name):
+    #     """
+    #     Return the byte address of the FieldsFile FIXED_LENGTH_HEADER
+    #     pointer attribute.
 
-        Args:
+    #     Args:
 
-        * name (string):
-            Specify the name of the FIXED_LENGTH_HEADER attribute.
+    #     * name (string):
+    #         Specify the name of the FIXED_LENGTH_HEADER attribute.
 
-        Returns:
-            A numpy.int64 containing the byte address.
+    #     Returns:
+    #         A numpy.int64 containing the byte address.
 
-        """
+    #     """
 
-        if name in _FF_HEADER_POINTERS:
-            value = getattr(self, name)[0] * self._word_depth
-        else:
-            msg = '{!r} object does not have pointer attribute {!r}'
-            raise AttributeError(msg.format(self.__class__.__name__, name))
-        return value
+    #     if name in _FF_HEADER_POINTERS:
+    #         value = getattr(self, name)[0] * self._word_depth
+    #     else:
+    #         msg = '{!r} object does not have pointer attribute {!r}'
+    #         raise AttributeError(msg.format(self.__class__.__name__, name))
+    #     return value
 
     def shape(self, name):
         """
@@ -317,6 +318,17 @@ class FF2PP(object):
         if self._ff_header.dataset_type == 1:
             table_count = self._ff_header.total_prognostic_fields
 
+        stash_grid = iris.fileformats.ff_xrefs.stash_grid
+        x_p, y_p, x_u, y_v = (None, None, None, None)
+        if self._ff_header.column_dependent_constants is not None:
+            x_p = self._ff_header.column_dependent_constants[:, 0]
+            if self._ff_header.column_dependent_constants.shape[1] == 2:
+                x_u = self._ff_header.column_dependent_constants[:, 1]
+        if self._ff_header.row_dependent_constants is not None:
+            y_p = self._ff_header.row_dependent_constants[:, 0]
+            if self._ff_header.row_dependent_constants.shape[1] == 2:
+                y_v = self._ff_header.row_dependent_constants[:-1, 1]
+
         # Process each FF LOOKUP table entry.
         while table_count:
             table_count -= 1
@@ -349,22 +361,26 @@ class FF2PP(object):
             # Determine PP field data shape.
             data_shape = (field.lbrow, field.lbnpt)
             # set x and y coordinates if they are defined as arrays
-            stash = ff_xrefs.stash_refs.get(field.stash.__str__(), {})
-            grid = stash.get('Grid')
-            if self._ff_header.column_dependent_constants is not None:
-                x_p = self._ff_header.column_dependent_constants[:, 0]
-                x_u = self._ff_header.column_dependent_constants[:, 1]
-                y_p = self._ff_header.row_dependent_constants[:, 0]
-                y_v = self._ff_header.row_dependent_constants[:, 1]
-                if grid == 18:
-                    field.x = x_u
-                    field.y = y_p
-                elif grid == 19:
-                    field.x = x_p
-                    field.y = y_v[:-1]
-                else:
-                    field.x = x_p
-                    field.y = y_p
+            grid = stash_grid.get(field.stash.__str__(), None)
+            # x_p, y_p, x_u, y_v = (None, None, None, None)
+            # if self._ff_header.column_dependent_constants is not None:
+            #     x_p = self._ff_header.column_dependent_constants[:, 0]
+            #     if self._ff_header.column_dependent_constants.shape[1] == 2:
+            #         x_u = self._ff_header.column_dependent_constants[:, 1]
+            # if self._ff_header.row_dependent_constants is not None:
+            #     y_p = self._ff_header.row_dependent_constants[:, 0]
+            #     if self._ff_header.row_dependent_constants.shape[1] == 2:
+            #         y_v = self._ff_header.row_dependent_constants[:, 1]
+            if grid == 18:
+                field.x = x_u
+                # field.x = self._ff_header.column_dependent_constants[x_u]
+                field.y = y_p
+            elif grid == 19:
+                field.x = x_p
+                field.y = y_v
+            else:
+                field.x = x_p
+                field.y = y_p
             # Determine whether to read the associated PP field data.
             if self._read_data:
                 # Move file pointer to the start of the current PP field data.
