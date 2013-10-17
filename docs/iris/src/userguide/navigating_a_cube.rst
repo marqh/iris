@@ -94,7 +94,7 @@ Each cube also has a :mod:`numpy` array which represents the phenomenon of the c
 
 You can change the units of a cube using the :meth:`~iris.cube.Cube.convert_units` method. For example::
 
-    cube.convert_units('celsius')
+    cube.convert_units('bar')
 
 As well as changing the value of the :attr:`~iris.cube.Cube.units` attribute this will also convert the values in
 :attr:`~iris.cube.Cube.data`. To replace the units without modifying the data values one can change the

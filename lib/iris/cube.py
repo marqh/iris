@@ -42,7 +42,9 @@ import iris._concatenate
 import iris._constraints
 import iris._merge
 import iris.exceptions
+import iris.unit
 import iris.util
+
 
 from iris._cube_coord_common import CFVariableMixin
 
@@ -681,21 +683,29 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         Change the cube's units, converting the values in the data array.
 
         For example, if a cube's :attr:`~iris.cube.Cube.units` are
-        kelvin then::
+        hPa then::
 
-            cube.convert_units('celsius')
+            cube.convert_units('bar')
 
         will change the cube's :attr:`~iris.cube.Cube.units` attribute to
-        celsius and subtract 273.15 from each value in
-        :attr:`~iris.cube.Cube.data`.
+        bar and divide each value in :attr:`~iris.cube.Cube.data` by 1000.
+
+        Attempting to convert a temperature will raise a value error as
+        temperature conversions involve Kelvin and Celcius which are
+        differently specified for differences or absolute values.
 
         .. warning::
             Calling this method will trigger any deferred loading, causing
             the cube's data array to be loaded into memory.
 
         """
-        # If the cube has units convert the data.
-        if not self.units.is_unknown():
+        # If a temperature, don't convert, due to ambiguities in absolute
+        # temperatures and temperature differences
+        if self.units.is_convertible(iris.unit.Unit('K')):
+            raise ValueError('Temperature unit conversion is '
+                             'ambiguous, no conversion has occurred')
+        # Else, if the cube has units convert the data.
+        elif not self.units.is_unknown():
             self.data = self.units.convert(self.data, unit)
         self.units = unit
 

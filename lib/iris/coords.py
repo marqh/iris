@@ -622,10 +622,19 @@ class Coord(CFVariableMixin):
         multiply each value in :attr:`~iris.coords.Coord.points` and
         :attr:`~iris.coords.Coord.bounds` by 180.0/:math:`\pi`.
 
+        Attempting to convert a temperature will raise a value error as
+        temperature conversions involve Kelvin and Celcius which are
+        differently specified for differences or absolute values.
+
         """
-        # If the coord has units convert the values in points (and bounds if
-        # present).
-        if not self.units.is_unknown():
+        # If a temperature, don't convert, due to ambiguities in absolute
+        # temperatures and temperature differences
+        if self.units.is_convertible(iris.unit.Unit('K')):
+            raise ValueError('Temperature unit conversion is '
+                             'ambiguous, no conversion has occurred')
+        # Else, if the coord has units convert the values in points
+        # (and bounds if present).
+        elif not self.units.is_unknown():
             self.points = self.units.convert(self.points, unit)
             if self.bounds is not None:
                 self.bounds = self.units.convert(self.bounds, unit)
