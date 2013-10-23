@@ -443,7 +443,11 @@ class IrisTest(unittest.TestCase):
             if not os.path.isdir(os.path.dirname(expected_fname)):
                 os.makedirs(os.path.dirname(expected_fname))
 
-            result_fname = os.path.join(os.path.dirname(__file__),
+            if iris.config.TEST_IMAGE_DIR:
+                result_folder = iris.config.TEST_IMAGE_DIR
+            else:
+                result_folder = os.path.dirname(__file__)
+            result_fname = os.path.join(result_folder,
                                         'result_image_comparison',
                                         'result-' + unique_id + '.png')
 

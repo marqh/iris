@@ -142,3 +142,11 @@ RULE_LOG_IGNORE = get_option(_LOGGING_SECTION, 'rule_ignore')
 
 
 IMPORT_LOGGER = get_option(_LOGGING_SECTION, 'import_logger')
+
+
+#####################
+# test folder options
+
+_TESTING_SECTION = 'testing'
+
+TEST_IMAGE_DIR = get_dir_option(_TESTING_SECTION, 'image_dir')
