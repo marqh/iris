@@ -260,18 +260,17 @@ def _non_missing_forecast_period(cube):
             "Unexpected units for 'forecast_period' : %s" % fp_coord.units)
 
     # # Convert fp meaning from Iris (R to t) to grib (R to start-of-period)
-    # if not t_coord.has_bounds():
-    #     fp = fp_coord.points[0]
-    # else:
-    #     fp = t_coord.bounds[0][0] - rt_num
-    #     fp = iris.unit.Unit('hours').convert(fp, fp_coord.units)
+    if not t_coord.has_bounds():
+        fp = fp_coord.points[0]
+    else:
+        fp = fp_coord.bounds[0][0]
+        # fp = t_coord.bounds[0][0] - rt_num
+        fp = iris.unit.Unit('hours').convert(fp, fp_coord.units)
 
-    # if fp - int(fp):
-    #     warnings.warn("forecast_period encoding problem: "
-    #                   "scaling required.")
-    # fp = int(fp)
-    if fp_coord.has_bounds():
-        fp = fp_coord.bounds[0]
+    if fp - int(fp):
+        warnings.warn("forecast_period encoding problem: "
+                      "scaling required.")
+    fp = int(fp)
 
     # Turn negative forecast times into grib negative numbers?
     from iris.fileformats.grib import hindcast_workaround
