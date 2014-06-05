@@ -582,13 +582,17 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             :mod:`iris.aux_factory`.
 
         For example::
-
-            latitude = DimCoord(range(-85, 105, 10), standard_name='latitude',
-                                units='degrees')
-            longitude = DimCoord(range(0, 360, 10), standard_name='longitude',
-                                 units='degrees')
-            cube = Cube(np.zeros((18, 36), np.float32),
-                        dim_coords_and_dims=[(latitude, 0), (longitude, 1)])
+            >>> from iris.coords import DimCoord
+            >>> from iris.cube import Cube
+            >>> latitude = DimCoord(np.linspace(-90, 90, 4),
+            ...                     standard_name='latitude',
+            ...                     units='degrees')
+            >>> longitude = DimCoord(np.linspace(45, 360, 8),
+            ...                      standard_name='longitude',
+            ...                      units='degrees')
+            >>> cube = Cube(np.zeros((4, 8), np.float32),
+            ...             dim_coords_and_dims=[(latitude, 0),
+            ...                                  (longitude, 1)])
 
         """
         # Temporary error while we transition the API.
@@ -3193,6 +3197,29 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         coords, points = zip(*sample_points)
         interp = scheme.interpolator(self, coords)
         return interp(points, collapse_scalar=collapse_scalar)
+
+    def regrid(self, grid, scheme):
+        """
+        Regrid this :class:`~iris.cube.Cube` on to the given `grid`
+        using the provided regridding scheme.
+
+        Args:
+
+        * grid:
+            A :class:`~iris.cube.Cube` which defines the target grid.
+        * scheme:
+            A :class:`~iris.analysis.Linear` instance, which defines the
+            interpolator scheme.
+
+        Returns:
+            A cube defined with the horizontal dimensions of the target
+            and the other dimensions from this cube. The data values of
+            this cube will be converted to values on the new grid
+            according to the given scheme.
+
+        """
+        regridder = scheme.regridder(self, grid)
+        return regridder(self)
 
 
 class ClassDict(object, UserDict.DictMixin):
