@@ -577,7 +577,7 @@ class Saver(object):
         self._dataset.sync()
         self._dataset.close()
 
-    def write(self, cube, local_keys=None, unlimited_dimensions=None,
+    def write(self, cube, local_keys=None, unlimited_dimensions=[],
               zlib=False, complevel=4, shuffle=True, fletcher32=False,
               contiguous=False, chunksizes=None, endian='native',
               least_significant_digit=None):
@@ -600,11 +600,9 @@ class Saver(object):
           :class:`iris.coords.Coord` objects):
             Explicit list of coordinate names (or coordinate objects)
             corresponding to coordinate dimensions of `cube` to save with the
-            NetCDF dimension variable length 'UNLIMITED'. By default, the
-            outermost (first) dimension for each cube is used. Only the
-            'NETCDF4' format supports multiple 'UNLIMITED' dimensions. To save
-            no unlimited dimensions, use `unlimited_dimensions=[]` (an empty
-            list).
+            NetCDF dimension variable length 'UNLIMITED'. By default, no
+            dimensions are saved as 'UNLIMITED' is used. Only the 'NETCDF4'
+            format supports multiple 'UNLIMITED' dimensions. 
 
         * zlib (bool):
             If `True`, the data will be compressed in the netCDF file using
@@ -745,7 +743,7 @@ class Saver(object):
             setattr(self._dataset, attr_name, kwargs[attr_name])
 
     def _create_cf_dimensions(self, cube, dimension_names,
-                              unlimited_dimensions=None):
+                              unlimited_dimensions=[]):
         """
         Create the CF-netCDF data dimensions.
 
@@ -759,7 +757,7 @@ class Saver(object):
         * unlimited_dimensions (iterable of strings and/or
           :class:`iris.coords.Coord` objects):
             List of coordinates to make unlimited. By default, the
-            outermost dimension is made unlimited.
+            no dimensions are made unlimited.
 
         Returns:
             None.
@@ -1465,7 +1463,7 @@ class Saver(object):
 
 
 def save(cube, filename, netcdf_format='NETCDF4', local_keys=None,
-         unlimited_dimensions=None, zlib=False, complevel=4, shuffle=True,
+         unlimited_dimensions=[], zlib=False, complevel=4, shuffle=True,
          fletcher32=False, contiguous=False, chunksizes=None, endian='native',
          least_significant_digit=None):
     """
@@ -1501,12 +1499,11 @@ def save(cube, filename, netcdf_format='NETCDF4', local_keys=None,
 
     * unlimited_dimensions (iterable of strings and/or
       :class:`iris.coords.Coord` objects):
-        Explicit list of coordinate names (or coordinate objects) corresponding
-        to coordinate dimensions of `cube` to save with the NetCDF dimension
-        variable length 'UNLIMITED'. By default, the outermost (first)
-        dimension for each cube is used. Only the 'NETCDF4' format supports
-        multiple 'UNLIMITED' dimensions. To save no unlimited dimensions, use
-        `unlimited_dimensions=[]` (an empty list).
+        Explicit list of coordinate names (or coordinate objects)
+        corresponding to coordinate dimensions of `cube` to save with the
+        NetCDF dimension variable length 'UNLIMITED'. By default, no
+        dimensions are saved as 'UNLIMITED' is used. Only the 'NETCDF4'
+        format supports multiple 'UNLIMITED' dimensions. 
 
     * zlib (bool):
         If `True`, the data will be compressed in the netCDF file using gzip
