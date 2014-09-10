@@ -316,11 +316,13 @@ class RotatedGeogCS(CoordSystem):
 
     def as_cartopy_crs(self):
         return ccrs.RotatedGeodetic(self.grid_north_pole_longitude,
-                                    self.grid_north_pole_latitude)
+                                    self.grid_north_pole_latitude,
+                                    self.north_pole_grid_longitude)
 
     def as_cartopy_projection(self):
-        return ccrs.RotatedPole(self.grid_north_pole_longitude,
-                                self.grid_north_pole_latitude)
+        return crs.RotatedPole(self.grid_north_pole_longitude,
+                               self.grid_north_pole_latitude,
+                               self.north_pole_grid_longitude)
 
 
 class TransverseMercator(CoordSystem):
