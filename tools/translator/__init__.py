@@ -315,12 +315,12 @@ class Mapping(object):
 
 
 def _cfn(line):
-    '''
+    """
     Helper function to parse dictionary lines using the CFName named tuple.
     Matches to the line '    CFName({standard_name}, {long_name}, {units}:*)
     giving access to these named parts
 
-    '''
+    """
     match = re.match('^    CFName\((.+), (.+), (.+)\):.+,', line)
     if match is None:
         raise ValueError('encoding not sortable')
