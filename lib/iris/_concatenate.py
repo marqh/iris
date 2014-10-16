@@ -129,8 +129,8 @@ class _CoordMetaData(namedtuple('CoordMetaData',
         bounds_dtype = coord.bounds.dtype if coord.bounds is not None \
             else None
         kwargs = {}
-        # Add scalar flag metadata.
-        kwargs['scalar'] = coord.points.size == 1
+        # Add length_one flag metadata.
+        kwargs['length_one'] = coord.points.size == 1
         # Add circular flag metadata for dimensional coordinates.
         if hasattr(coord, 'circular'):
             kwargs['circular'] = coord.circular
@@ -160,12 +160,12 @@ class _CoordMetaData(namedtuple('CoordMetaData',
                 skwargs, okwargs = self.kwargs.copy(), other.kwargs.copy()
                 # Monotonic "order" only applies to DimCoord's.
                 # The monotonic "order" must be _INCREASING or _DECREASING if
-                # the DimCoord is NOT "scalar". Otherwise, if the DimCoord is
-                # "scalar" then the "order" must be _CONSTANT.
-                if skwargs['scalar'] or okwargs['scalar']:
+                # the DimCoord is NOT "length_one". Otherwise, if the DimCoord
+                # is "length_one" then the "order" must be _CONSTANT.
+                if skwargs['length_one'] or okwargs['length_one']:
                     # We don't care about the monotonic "order" given that
                     # at least one coordinate is a scalar coordinate.
-                    skwargs['scalar'] = okwargs['scalar'] = None
+                    skwargs['length_one'] = okwargs['length_one'] = None
                     skwargs['order'] = okwargs['order'] = None
                 result = skwargs == okwargs
         return result

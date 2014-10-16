@@ -55,23 +55,27 @@ class Test__coordinate_dim_metadata_equality(tests.IrisTest):
         self.series_dec_cube.add_dim_coord(t_tmp, 0)
         self.series_dec = CubeSignature(self.series_dec_cube)
 
-        # Scalar time-series cube.
+        # Length_one time-series cube.
         cube = Cube(0, standard_name='air_temperature', units='K')
         cube.add_aux_coord(DimCoord(points=nt,
                                     standard_name='time',
                                     units=t_units))
-        self.scalar_cube = cube
+        self.length_one_cube = cube
 
-    def test_scalar_non_common_axis(self):
-        scalar = CubeSignature(self.scalar_cube)
-        self.assertFalse(self.series_inc.dim_metadata == scalar.dim_metadata)
-        self.assertFalse(self.series_dec.dim_metadata == scalar.dim_metadata)
+    def test_length_one_non_common_axis(self):
+        length_one = CubeSignature(self.length_one_cube)
+        self.assertFalse(self.series_inc.dim_metadata ==
+                         length_one.dim_metadata)
+        self.assertFalse(self.series_dec.dim_metadata ==
+                         length_one.dim_metadata)
 
-    def test_scalar_common_axis(self):
-        # Manually promote scalar time cube to be a 1d cube.
-        scalar = CubeSignature(new_axis(self.scalar_cube, 'time'))
-        self.assertTrue(self.series_inc.dim_metadata == scalar.dim_metadata)
-        self.assertTrue(self.series_dec.dim_metadata == scalar.dim_metadata)
+    def test_length_one_common_axis(self):
+        # Manually promote length_one time cube to be a 1d cube.
+        length_one = CubeSignature(new_axis(self.length_one_cube, 'time'))
+        self.assertTrue(self.series_inc.dim_metadata ==
+                        length_one.dim_metadata)
+        self.assertTrue(self.series_dec.dim_metadata ==
+                        length_one.dim_metadata)
 
     def test_increasing_common_axis(self):
         series_inc = self.series_inc
