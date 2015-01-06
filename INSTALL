@@ -1,4 +1,25 @@
-You can either install Iris from source or from the conda package manager.
+You can either install Iris using the conda package manager or from source.
+
+Installing from conda
+---------------------
+
+Iris can be installed using the `conda <http://conda.pydata.org/>`_ package manager.
+
+Iris is available from conda for the following platforms:
+ * Linux 64-bit,
+ * Mac OSX 64-bit, and
+ * Windows 32-bit and 64-bit.
+
+To install Iris from conda, you must first download and install conda, for example from
+http://conda.pydata.org/miniconda.html.
+
+Once conda is installed, you can install Iris from conda on any platform with the following command::
+
+  conda install -c scitools iris
+
+Further documentation on using conda and the features it provides can be found
+at http://conda.pydata.org/docs/intro.html.
+
 
 Installing from Source
 ----------------------
@@ -165,23 +186,3 @@ Redhat provides some of the dependencies for Iris as does `Python (x, y)
 <http://www.pythonxy.com/>`_ which tends to be updated a
 bit more frequently.
 
-
-Installing from conda
----------------------
-
-Iris can be installed using the `conda <http://conda.pydata.org/>`_ package manager.
-
-Iris is available from conda for the following platforms:
- * Linux 64-bit,
- * Mac OSX 64-bit, and
- * Windows 32-bit and 64-bit.
-
-To install Iris from conda, you must first download and install conda, for example from
-http://conda.pydata.org/miniconda.html.
-
-Once conda is installed, you can install Iris from conda on any platform with the following command::
-
-  conda install -c scitools iris
-
-Further documentation on using conda and the features it provides can be found
-at http://conda.pydata.org/docs/intro.html.
