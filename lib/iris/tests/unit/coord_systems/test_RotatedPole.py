@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2014, Met Office
+# (C) British Crown Copyright 2014 - 2015, Met Office
 #
 # This file is part of Iris.
 #
@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Iris.  If not, see <http://www.gnu.org/licenses/>.
 """Unit tests for the :class:`iris.coord_systems.RotatedPole` class."""
+
+from __future__ import (absolute_import, division, print_function)
 
 # Import iris.tests first so that some things can be initialised before
 # importing anything else.
