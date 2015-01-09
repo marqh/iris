@@ -320,7 +320,7 @@ class RotatedGeogCS(CoordSystem):
                                     self.north_pole_grid_longitude)
 
     def as_cartopy_projection(self):
-        return crs.RotatedPole(self.grid_north_pole_longitude,
+        return ccrs.RotatedPole(self.grid_north_pole_longitude,
                                self.grid_north_pole_latitude,
                                self.north_pole_grid_longitude)
 
