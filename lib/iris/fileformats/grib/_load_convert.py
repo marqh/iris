@@ -1870,6 +1870,9 @@ def product_definition_section(section, metadata, discipline, tablesVersion,
 def data_representation_section(section):
     """
     Translate section 5 from the GRIB2 message.
+    Grid point template decoding is fully provided by the ECMWF GRIB API,
+    all grid point and spectral templates are supported, the data payload
+    is returned from the GRIB API already unpacked.
 
     """
     # Reference GRIB2 Code Table 5.0.
