@@ -266,6 +266,7 @@ class NetCDFDataProxy(object):
         return len(self.shape)
 
     def __getitem__(self, keys):
+        kshape = tuple((len(k) for k in keys))
         dataset = netCDF4.Dataset(self.path)
         try:
             variable = dataset.variables[self.variable_name]
@@ -273,6 +274,11 @@ class NetCDFDataProxy(object):
             data = variable[keys]
         finally:
             dataset.close()
+        # indexing from netCDF4python can drop trailing dimensions
+        # of size one.  a reshape to the expected shape from the keys
+        # fixes this if it occurs
+        if data.shape != kshape:
+            data = data.reshape(kshape)
         return data
 
     def __repr__(self):
