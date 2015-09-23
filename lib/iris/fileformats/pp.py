@@ -1589,6 +1589,79 @@ class PPField(six.with_metaclass(abc.ABCMeta, object)):
             result = not result
         return result
 
+    def 64bit_headers_and_data(self, imdi):
+        """
+        Returns a tuple of (int_headers, real_headers, data_provider)
+        from the PPField with 64 bit word length headers, suitable for
+        use in a 64bit file such as a UM FieldsFile.
+
+        """
+        _FFV_ATTRIBUTES = {'dtype': {'float': 1, 'int': 2}}
+
+        # ensure the data is big-endian
+        int_headers = np.empty(shape=NUM_LONG_HEADERS,
+                               dtype=np.dtype(">u%d" % PP_WORD_DEPTH))
+        int_headers.fill(imdi)
+        real_headers = np.empty(shape=NUM_FLOAT_HEADERS,
+                                dtype=np.dtype(">f%d" % PP_WORD_DEPTH))
+
+        if ((getattr(self, 'x', None) is not None) or
+                (getattr(self, 'y', None) is not None)):
+            raise ValueError('Unstructured grids not yet supported.'
+                             ' LBEXT will need populating.')
+
+        word_count = 0
+        for name, word_no in self.HEADER_DEFN:
+            self_value = getattr(self, name)
+            for sub_indx, num in enumerate(word_no):
+                if len(word_no) > 1:
+                    value = self_value[sub_indx]
+                else:
+                    value = self_value
+
+                # First sort out the integer headers
+                if word_count >= NUM_LONG_HEADERS:
+                    word_count = 0
+
+                # Cast as string as special types include SplittableInt and
+                # _LBProc
+                if num < NUM_LONG_HEADERS:
+                    int_headers[word_count] = int(value)
+                else:
+                    real_headers[word_count] = float(value)
+                word_count += 1
+
+        # Associate the data - fields file variants should always be 64bit.
+        data = self.data
+        if isinstance(data, np.ma.core.MaskedArray):
+            data = data.filled(fill_value=self.bmdi)
+        if data.dtype.newbyteorder('>') != data.dtype:
+            # take a copy of the data when byteswapping
+            data = data.byteswap(False)
+            data.dtype = data.dtype.newbyteorder('>')
+        if data.dtype == np.dtype('>f4'):
+            warnings.warn("Up-casting array precision from float32 to float64 "
+                          "for save.")
+            data = data.astype('>f8')
+            int_headers[38] = _FFV_ATTRIBUTES['dtype']['float']
+        elif data.dtype == np.dtype('>f8'):
+            int_headers[38] = _FFV_ATTRIBUTES['dtype']['float']
+        elif data.dtype == np.dtype('>i4'):
+            int_headers[38] = _FFV_ATTRIBUTES['dtype']['int']
+        else:
+            msg = 'Cannot encode {} into a 64 bit representation'
+            raise RuntimeError(msg.format(data.dtype))
+
+        # Make any field specific changes.
+        # LBLREC - length of data record
+        int_headers[14] = ppfield.lbext + ppfield.data.size
+        # LBUSER(2) - start address in DATA
+        #             (relative start of Fixed Length Header)
+        int_headers[39] = 1
+
+        return (int_headers=int_headers, real_headers=real_headers,
+                data_provider=data)
+
 
 class PPField2(PPField):
     """
