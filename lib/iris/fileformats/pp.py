@@ -1589,7 +1589,7 @@ class PPField(six.with_metaclass(abc.ABCMeta, object)):
             result = not result
         return result
 
-    def 64bit_headers_and_data(self, imdi):
+    def sixtyfour_bit_headers_and_data(self, imdi):
         """
         Returns a tuple of (int_headers, real_headers, data_provider)
         from the PPField with 64 bit word length headers, suitable for
@@ -1600,10 +1600,10 @@ class PPField(six.with_metaclass(abc.ABCMeta, object)):
 
         # ensure the data is big-endian
         int_headers = np.empty(shape=NUM_LONG_HEADERS,
-                               dtype=np.dtype(">u%d" % PP_WORD_DEPTH))
+                               dtype=np.dtype(">u8"))
         int_headers.fill(imdi)
         real_headers = np.empty(shape=NUM_FLOAT_HEADERS,
-                                dtype=np.dtype(">f%d" % PP_WORD_DEPTH))
+                                dtype=np.dtype(">f8"))
 
         if ((getattr(self, 'x', None) is not None) or
                 (getattr(self, 'y', None) is not None)):
@@ -1640,13 +1640,14 @@ class PPField(six.with_metaclass(abc.ABCMeta, object)):
             data = data.byteswap(False)
             data.dtype = data.dtype.newbyteorder('>')
         if data.dtype == np.dtype('>f4'):
-            warnings.warn("Up-casting array precision from float32 to float64 "
-                          "for save.")
             data = data.astype('>f8')
             int_headers[38] = _FFV_ATTRIBUTES['dtype']['float']
         elif data.dtype == np.dtype('>f8'):
             int_headers[38] = _FFV_ATTRIBUTES['dtype']['float']
         elif data.dtype == np.dtype('>i4'):
+            data = data.astype('>i8')
+            int_headers[38] = _FFV_ATTRIBUTES['dtype']['int']
+        elif data.dtype == np.dtype('>i8'):
             int_headers[38] = _FFV_ATTRIBUTES['dtype']['int']
         else:
             msg = 'Cannot encode {} into a 64 bit representation'
@@ -1654,13 +1655,12 @@ class PPField(six.with_metaclass(abc.ABCMeta, object)):
 
         # Make any field specific changes.
         # LBLREC - length of data record
-        int_headers[14] = ppfield.lbext + ppfield.data.size
+        int_headers[14] = self.lbext + self.data.size
         # LBUSER(2) - start address in DATA
         #             (relative start of Fixed Length Header)
         int_headers[39] = 1
 
-        return (int_headers=int_headers, real_headers=real_headers,
-                data_provider=data)
+        return (int_headers, real_headers, data)
 
 
 class PPField2(PPField):
