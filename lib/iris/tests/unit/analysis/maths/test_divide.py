@@ -30,6 +30,7 @@ from iris.analysis.maths import divide
 from iris.cube import Cube
 from iris.tests.unit.analysis.maths import \
     CubeArithmeticBroadcastingTestMixin, CubeArithmeticMaskingTestMixin
+from iris.unit import Unit
 
 
 class TestBroadcasting(tests.IrisTest, CubeArithmeticBroadcastingTestMixin):
@@ -84,6 +85,13 @@ class TestMasking(tests.IrisTest, CubeArithmeticMaskingTestMixin):
         res = self.cube_func(cube_b, cube_a).data
 
         self.assertMaskedArrayEqual(com, res, strict=True)
+
+
+class TestUnit(tests.IrisTest):
+    def test_scalar_div(self):
+        thirtyC = Cube(np.array((30,)), units=Unit('degC'))
+        tenC = thirtyC / 3
+        self.assertEqual(tenC.units, thirtyC.units)
 
 
 if __name__ == "__main__":

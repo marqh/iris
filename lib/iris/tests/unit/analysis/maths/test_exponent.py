@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with Iris.  If not, see <http://www.gnu.org/licenses/>.
-"""Unit tests for the :func:`iris.analysis.maths.multiply` function."""
+"""Unit tests for the :func:`iris.analysis.maths.exp` function."""
 
 from __future__ import (absolute_import, division, print_function)
 from six.moves import (filter, input, map, range, zip)  # noqa
@@ -23,40 +23,19 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 # importing anything else.
 import iris.tests as tests
 
+import numpy as np
 import operator
 
-from iris.analysis.maths import multiply
+from iris.analysis.maths import exp
 from iris.cube import Cube
-from iris.tests.unit.analysis.maths import \
-    CubeArithmeticBroadcastingTestMixin, CubeArithmeticMaskingTestMixin
 from iris.unit import Unit
 
 
-class TestBroadcasting(tests.IrisTest, CubeArithmeticBroadcastingTestMixin):
-    @property
-    def data_op(self):
-        return operator.mul
-
-    @property
-    def cube_func(self):
-        return multiply
-
-
-class TestMasking(tests.IrisTest, CubeArithmeticMaskingTestMixin):
-    @property
-    def data_op(self):
-        return operator.mul
-
-    @property
-    def cube_func(self):
-        return multiply
-
-
 class TestUnit(tests.IrisTest):
-    def test_scalar_multiply(self):
+    def test_scalar_div(self):
         tenC = Cube(np.array((10,)), units=Unit('degC'))
-        thirtyC = tenC * 3
-        self.assertEqual(tenC.units, thirtyC.units)
+        hundredC = tenC ** 2
+        self.assertEqual(hundredC.units.__str__(), 'degC^2')
 
 
 if __name__ == "__main__":
