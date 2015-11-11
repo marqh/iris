@@ -34,7 +34,7 @@ from iris import FUTURE
 from iris.analysis import WeightedAggregator, Aggregator
 from iris.analysis import MEAN
 from iris.cube import Cube
-from iris.coords import AuxCoord, DimCoord
+from iris.coords import AuxCoord, DimCoord, CellMeasure
 from iris.exceptions import CoordinateNotFoundError
 from iris.tests import mock
 import iris.tests.stock as stock
@@ -1254,6 +1254,42 @@ class Test_add_metadata(tests.IrisTest):
                              long_name='x')
         cube.add_aux_coord(x_coord, [0, 1])
         self.assertEqual(cube.coord('x'), x_coord)
+
+    def test_add_cell_measure(self):
+        cube = Cube(np.arange(6).reshape(2,3))
+        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2,3),
+                                     long_name='area')
+        cube.add_cell_measure(a_cell_measure, [0, 1])
+        self.assertEqual(cube.cell_measure('area'), a_cell_measure)
+
+
+class Test_remove_metadata(tests.IrisTest):
+    def setUp(self):
+        cube = Cube(np.arange(6).reshape(2,3))
+        x_coord = DimCoord(points=np.array([2, 3, 4]),
+                             long_name='x')
+        cube.add_dim_coord(x_coord, 1)
+        z_coord = AuxCoord(points=np.arange(6).reshape(2,3),
+                             long_name='z')
+        cube.add_aux_coord(z_coord, [0, 1])
+        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2,3),
+                                     long_name='area')
+        cube.add_cell_measure(a_cell_measure, [0, 1])
+        self.cube = cube
+
+    def test_remove_dim_coord(self):
+        self.cube.remove_coord(self.cube.coord('x'))
+        self.assertEqual(self.cube.coords('x'), [])
+
+    def test_remove_aux_coord(self):
+        self.cube.remove_coord(self.cube.coord('z'))
+        self.assertEqual(self.cube.coords('z'), [])
+
+    def test_remove_cell_measure(self):
+        import pdb; pdb.set_trace()
+        print(self.cube)
+        self.cube.remove_cell_measure(self.cube.cell_measure('area'))
+        self.assertEqual(self.cube.cell_measures('area'), [])
 
 
 if __name__ == '__main__':

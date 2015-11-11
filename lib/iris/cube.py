@@ -609,7 +609,8 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
     def __init__(self, data, standard_name=None, long_name=None,
                  var_name=None, units=None, attributes=None,
                  cell_methods=None, dim_coords_and_dims=None,
-                 aux_coords_and_dims=None, aux_factories=None):
+                 aux_coords_and_dims=None, aux_factories=None,
+                 cell_measures_and_dims=None):
         """
         Creates a cube with data and optional metadata.
 
@@ -727,6 +728,10 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         if aux_factories:
             for factory in aux_factories:
                 self.add_aux_factory(factory)
+
+        if cell_measures_and_dims:
+            for cell_measure, dims in cell_measures_and_dims:
+                self.add_cell_measure(cell_measure, dims)
 
     @property
     def metadata(self):
@@ -931,13 +936,13 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         :meth:`Cube.remove_cell_measure()<iris.cube.Cube.remove_cell_measure>`.
 
         """
-        if self.cell_measure(cell_measure):
+        if self.cell_measures(cell_measure):
             raise ValueError('Duplicate cell_measures are not permitted.')
         self._add_unique_cell_measure(cell_measure, data_dims)
 
     def _add_unique_cell_measure(self, cell_measure, data_dims):
-        data_dims = _check_multi_dim_metadata(self, cell_measure,
-                                              data_dims, 'cell_measure')
+        data_dims = self._check_multi_dim_metadata(cell_measure, data_dims,
+                                                   'cell_measure')
         self._cell_measures_and_dims.append([cell_measure, data_dims])
         
 
@@ -1041,7 +1046,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         """
         self._cell_measures_and_dims = [(cell_measure_, dim) for cell_measure_, 
                                         dim in self._cell_measures_and_dims
-                                        is not cell_measure]
+                                        if cell_measure_ is not cell_measure]
 
 
     def replace_coord(self, new_coord):
@@ -1436,6 +1441,86 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
 
         return result
 
+    def cell_measures(self, name_or_cell_measure=None):
+        """
+        Return a list of cell measures in this cube fitting the given criteria.
+
+        Kwargs:
+
+        * name_or_cell_measure
+            Either
+
+            (a) a :attr:`standard_name`, :attr:`long_name`, or
+            :attr:`var_name`. Defaults to value of `default`
+            (which itself defaults to `unknown`) as defined in
+            :class:`iris._cube_coord_common.CFVariableMixin`.
+
+            (b) a cell_measure instance with metadata equal to that of
+            the desired cell_measures. 
+
+        See also :meth:`Cube.cell_measure()<iris.cube.Cube.cell_measure>`.
+
+        """
+        name = None
+        coord = None
+
+        if isinstance(name_or_cell_measure, six.string_types):
+            name = name_or_cell_measure
+        else:
+            cell_measure = name_or_cell_measure
+        cell_measures = []
+        for cm, dims in self._cell_measures_and_dims:
+            if name is not None:
+                if cm.name() == name:
+                    cell_measures.append(cm)
+            elif cell_measure is not None:
+                if cm == cell_measure:
+                    cell_measures.append(cm)
+        return cell_measures
+
+
+    def cell_measure(self, name_or_cell_measure=None):
+        """
+        Return a single cell_measure given the same arguments as 
+        :meth:`Cube.cell_measures`.
+
+        .. note::
+
+            If the arguments given do not result in precisely 1 cell_measure
+            being matched, an :class:`iris.exceptions.CoordinateNotFoundError`
+            is raised.
+
+        .. seealso::
+
+            :meth:`Cube.cell_measures()<iris.cube.Cube.cell_measures>` 
+            for full keyword documentation.
+
+        """
+        name = None
+        coord = None
+
+        if isinstance(name_or_cell_measure, six.string_types):
+            name = name_or_cell_measure
+        else:
+            cell_measure = name_or_cell_measure
+
+        cell_measures = self.cell_measures(name_or_cell_measure=name_or_cell_measure)
+
+        if len(cell_measures) > 1:
+            msg = 'Expected to find exactly 1 cell_measure, but found %s. ' \
+                  'They were: %s.' % (len(cell_measures), ', '.join(cm.name()
+                                                                    for cm in
+                                                                    cell_measures))
+            raise iris.exceptions.CoordinateNotFoundError(msg)
+        elif len(cell_measures) == 0:
+            bad_name = name or (cell_measure and cell_measure.name()) or ''
+            msg = 'Expected to find exactly 1 %s cell_measure, but found ' \
+                  'none.' % bad_name
+            raise iris.exceptions.CoordinateNotFoundError(msg)
+
+        return cell_measures[0]
+
+
     @property
     def cell_methods(self):
         """
@@ -1825,6 +1910,15 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                     vector_derived_coords, cube_header, max_line_offset)
                 summary += '\n     Derived coordinates:\n' + \
                     '\n'.join(derived_coord_summary)
+                             
+             #
+             # Generate summary of cube cell measures attribute
+             #
+ 
+             if self.cell_measures:
+                 summary += '\n     Cell Measures:\n'
+                 
+                 summary += '%*s%s' % (indent, ' ', str(self.cell_measures))
 
             #
             # Generate textual summary of cube scalar coordinates.

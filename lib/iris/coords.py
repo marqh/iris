@@ -1611,6 +1611,73 @@ class AuxCoord(Coord):
         return hash(id(self))
 
 
+class CellMeasure(AuxCoord):
+    """
+    CF Cell Measure
+
+    """
+
+    def __init__(self, points, standard_name=None, long_name=None,
+                 var_name=None, units='1', attributes=None):
+
+        """
+        Constructs a single cell measure.
+
+        Args:
+
+        * points:
+            The values of the measure for each cell.
+
+        Kwargs:
+
+        * standard_name:
+            CF standard name of coordinate
+        * long_name:
+            Descriptive name of coordinate
+        * var_name:
+            CF variable name of coordinate
+        * units
+            The :class:`~cf_units.Unit` of the coordinate's values.
+            Can be a string, which will be converted to a Unit object.
+        * attributes
+            A dictionary containing other cf and user-defined attributes.
+
+        """
+        #: CF standard name of the quantity that the coordinate represents.
+        self.standard_name = standard_name
+
+        #: Descriptive name of the coordinate.
+        self.long_name = long_name
+
+        #: The CF variable name for the coordinate.
+        self.var_name = var_name
+
+        #: Unit of the quantity that the coordinate represents.
+        self.units = units
+
+        #: Other attributes, including user specified attributes that
+        #: have no meaning to Iris.
+        self.attributes = attributes
+
+        #: ignore Coord CoordSystem functionality
+        self.coord_system = None
+
+        self.points = points
+        #: ignore Coord bounds functionality
+        self.bounds = None
+
+    # @bounds.setter
+    # def bounds(self, bounds):
+    #     if bounds is not None:
+    #         raise AttributeError('CellMeasure instances do not have bounds')
+
+    # @bounds.setter
+    # def coord_system(self, coord_system):
+    #     if coord_system is not None:
+    #         raise AttributeError('CellMeasure instances do not have bounds')
+
+
+
 class CellMethod(iris.util._OrderedHashable):
     """
     Represents a sub-cell pre-processing operation.
