@@ -763,7 +763,20 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 if missing_attrs:
                     raise TypeError('Invalid/incomplete metadata')
         for name in CubeMetadata._fields:
-            setattr(self, name, getattr(value, name))
+            # Only add _cell_measures_and_dims if the dimensions match
+            # indicating that they are still valid.
+            if name == 'cell_measures_and_dims':
+                cell_measure_change = False
+                for cm, dims in getattr(value, name):
+                    for i, dim in enumerate(dims):
+                        if (len(self.shape) > dim and 
+                            self.shape[dim] != cm.points.shape[i]):
+                            cell_measure_change = True
+                if not cell_measure_change:
+                    aname = '_{}'.format(name)
+                    setattr(self, aname, getattr(value, name))
+            else:
+                setattr(self, name, getattr(value, name))
 
     def is_compatible(self, other, ignore=None):
         """
