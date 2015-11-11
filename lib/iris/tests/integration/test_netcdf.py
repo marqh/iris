@@ -210,5 +210,29 @@ class TestLazySave(tests.IrisTest):
             self.assertCDL(other_filename)
 
 
+class TestCellMeasures(tests.IrisTest):
+    def setUp(self):
+        self.fname = tests.get_data_path(('NetCDF', 'ORCA2', 'votemper.nc'))
+
+    def test_load_raw(self):
+        cube, = iris.load_raw(self.fname)
+        self.assertEqual(len(cube.cell_measures()), 1)
+        self.assertEqual(cube.cell_measures()[0].measure, 'area')
+
+    def test_load(self):
+        cube = iris.load_cube(self.fname)
+        self.assertEqual(len(cube.cell_measures()), 1)
+        self.assertEqual(cube.cell_measures()[0].measure, 'area')
+
+    def test_round_trip(self):
+        cube, = iris.load_raw(self.fname)
+        with self.temp_filename(suffix='.nc') as filename:
+            iris.save(cube, filename, unlimited_dimensions=[])
+            round_cube, = iris.load_raw(filename)
+            self.assertEqual(len(round_cube.cell_measures()), 1)
+            self.assertEqual(round_cube.cell_measures()[0].measure, 'area')
+            
+
+
 if __name__ == "__main__":
     tests.main()

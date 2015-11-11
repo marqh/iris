@@ -1668,13 +1668,14 @@ class CellMeasure(AuxCoord):
 
     @property
     def measure(self):
-        return self.measure
+        return self._measure
 
     @measure.setter
     def measure(self, measure):
         if measure not in ['area', 'volume']:
             raise ValueError('measure must be area or volume, '
                              'not {}'.format(measure))
+        self._measure = measure
 
     @property
     def bounds(self):
