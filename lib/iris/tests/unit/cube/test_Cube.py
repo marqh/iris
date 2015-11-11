@@ -1258,7 +1258,7 @@ class Test_add_metadata(tests.IrisTest):
     def test_add_cell_measure(self):
         cube = Cube(np.arange(6).reshape(2, 3))
         a_cell_measure = CellMeasure(points=np.arange(6).reshape(2, 3),
-                                     long_name='area')
+                                     long_name='area', measure='area')
         cube.add_cell_measure(a_cell_measure, [0, 1])
         self.assertEqual(cube.cell_measure('area'), a_cell_measure)
 
@@ -1273,7 +1273,7 @@ class Test_remove_metadata(tests.IrisTest):
                            long_name='z')
         cube.add_aux_coord(z_coord, [0, 1])
         a_cell_measure = CellMeasure(points=np.arange(6).reshape(2, 3),
-                                     long_name='area')
+                                     long_name='area', measure='area')
         cube.add_cell_measure(a_cell_measure, [0, 1])
         self.cube = cube
 
