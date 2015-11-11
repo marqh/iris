@@ -878,7 +878,8 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         if data_dims:
             if len(data_dims) != metadata.ndim:
                 msg = 'Invalid data dimensions: {} given, {} expected for ' \
-                      '{!r}.'.format(len(data_dims), metadata.ndim, metadata.name())
+                      '{!r}.'.format(len(data_dims), metadata.ndim,
+                                     metadata.name())
                 raise ValueError(msg)
             # Check compatibility with the shape of the data
             for i, dim in enumerate(data_dims):
@@ -932,7 +933,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         Raises a ValueError if a cell_measure with identical metadata already
         exists on the cube.
 
-        See also 
+        See also
         :meth:`Cube.remove_cell_measure()<iris.cube.Cube.remove_cell_measure>`.
 
         """
@@ -944,7 +945,6 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         data_dims = self._check_multi_dim_metadata(cell_measure, data_dims,
                                                    'cell_measure')
         self._cell_measures_and_dims.append([cell_measure, data_dims])
-        
 
     def add_dim_coord(self, dim_coord, data_dim):
         """
@@ -1040,14 +1040,13 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         * cell_measure (CellMeasure)
             The CellMeasure to remove from the cube.
 
-        See also 
+        See also
         :meth:`Cube.add_cell_measure()<iris.cube.Cube.add_cell_measure>`
 
         """
-        self._cell_measures_and_dims = [(cell_measure_, dim) for cell_measure_, 
+        self._cell_measures_and_dims = [(cell_measure_, dim) for cell_measure_,
                                         dim in self._cell_measures_and_dims
                                         if cell_measure_ is not cell_measure]
-
 
     def replace_coord(self, new_coord):
         """
@@ -1390,12 +1389,12 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 cell_measures = self.cell_measures(name_or_coord)
                 if len(cell_measures) == 1:
                     coords = cell_measures
-            else:
-                bad_name = name or standard_name or long_name or \
-                    (coord and coord.name()) or ''
-                msg = 'Expected to find exactly 1 %s coordinate, but found ' \
-                      'none.' % bad_name
-                raise iris.exceptions.CoordinateNotFoundError(msg)
+        if len(coords) == 0:
+            bad_name = name or standard_name or long_name or \
+                (coord and coord.name()) or ''
+            msg = 'Expected to find exactly 1 %s coordinate, but found ' \
+                  'none.' % bad_name
+            raise iris.exceptions.CoordinateNotFoundError(msg)
 
         return coords[0]
 
@@ -1463,7 +1462,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             :class:`iris._cube_coord_common.CFVariableMixin`.
 
             (b) a cell_measure instance with metadata equal to that of
-            the desired cell_measures. 
+            the desired cell_measures.
 
         See also :meth:`Cube.cell_measure()<iris.cube.Cube.cell_measure>`.
 
@@ -1487,10 +1486,9 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 cell_measures.append(cm)
         return cell_measures
 
-
     def cell_measure(self, name_or_cell_measure=None):
         """
-        Return a single cell_measure given the same arguments as 
+        Return a single cell_measure given the same arguments as
         :meth:`Cube.cell_measures`.
 
         .. note::
@@ -1501,34 +1499,28 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
 
         .. seealso::
 
-            :meth:`Cube.cell_measures()<iris.cube.Cube.cell_measures>` 
+            :meth:`Cube.cell_measures()<iris.cube.Cube.cell_measures>`
             for full keyword documentation.
 
         """
-        name = None
-        coord = None
-
-        if isinstance(name_or_cell_measure, six.string_types):
-            name = name_or_cell_measure
-        else:
-            cell_measure = name_or_cell_measure
-
-        cell_measures = self.cell_measures(name_or_cell_measure=name_or_cell_measure)
+        cell_measures = self.cell_measures(name_or_cell_measure)
 
         if len(cell_measures) > 1:
             msg = 'Expected to find exactly 1 cell_measure, but found %s. ' \
-                  'They were: %s.' % (len(cell_measures), ', '.join(cm.name()
-                                                                    for cm in
-                                                                    cell_measures))
+                  'They were: {}.'.format(len(cell_measures),
+                                          ', '.join(cm.name() for cm in
+                                                    cell_measures))
             raise iris.exceptions.CoordinateNotFoundError(msg)
         elif len(cell_measures) == 0:
-            bad_name = name or (cell_measure and cell_measure.name()) or ''
+            if isinstance(name_or_cell_measure, six.string_types):
+                bad_name = name
+            else:
+                bad_name = (cell_measure and cell_measure.name()) or ''
             msg = 'Expected to find exactly 1 %s cell_measure, but found ' \
                   'none.' % bad_name
             raise iris.exceptions.CoordinateNotFoundError(msg)
 
         return cell_measures[0]
-
 
     @property
     def cell_methods(self):
@@ -1821,7 +1813,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                                      id(coord) not in scalar_coord_ids]
 
             # cell measures
-            vector_cell_measures = [cm for cm in self.cell_measures() 
+            vector_cell_measures = [cm for cm in self.cell_measures()
                                     if cm.shape != (1,)]
 
             # Determine the cube coordinates that don't describe the cube and
@@ -1923,7 +1915,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                     vector_derived_coords, cube_header, max_line_offset)
                 summary += '\n     Derived coordinates:\n' + \
                     '\n'.join(derived_coord_summary)
-                             
+
             #
             # Generate summary of cube cell measures attribute
             #
@@ -1932,8 +1924,6 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                     vector_cell_measures, cube_header, max_line_offset)
                 summary += '\n     Cell Measures:\n'
                 summary += '\n'.join(cell_measure_summary)
-                 
-                #summary += '%*s%s' % (indent, ' ', str(self.cell_measures))
 
             #
             # Generate textual summary of cube scalar coordinates.

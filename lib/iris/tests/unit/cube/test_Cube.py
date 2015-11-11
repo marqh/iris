@@ -1244,20 +1244,20 @@ class Test_add_metadata(tests.IrisTest):
     def test_add_dim_coord(self):
         cube = Cube(np.arange(3))
         x_coord = DimCoord(points=np.array([2, 3, 4]),
-                             long_name='x')
+                           long_name='x')
         cube.add_dim_coord(x_coord, 0)
         self.assertEqual(cube.coord('x'), x_coord)
 
     def test_add_aux_coord(self):
-        cube = Cube(np.arange(6).reshape(2,3))
-        x_coord = AuxCoord(points=np.arange(6).reshape(2,3),
-                             long_name='x')
+        cube = Cube(np.arange(6).reshape(2, 3))
+        x_coord = AuxCoord(points=np.arange(6).reshape(2, 3),
+                           long_name='x')
         cube.add_aux_coord(x_coord, [0, 1])
         self.assertEqual(cube.coord('x'), x_coord)
 
     def test_add_cell_measure(self):
-        cube = Cube(np.arange(6).reshape(2,3))
-        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2,3),
+        cube = Cube(np.arange(6).reshape(2, 3))
+        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2, 3),
                                      long_name='area')
         cube.add_cell_measure(a_cell_measure, [0, 1])
         self.assertEqual(cube.cell_measure('area'), a_cell_measure)
@@ -1265,14 +1265,14 @@ class Test_add_metadata(tests.IrisTest):
 
 class Test_remove_metadata(tests.IrisTest):
     def setUp(self):
-        cube = Cube(np.arange(6).reshape(2,3))
+        cube = Cube(np.arange(6).reshape(2, 3))
         x_coord = DimCoord(points=np.array([2, 3, 4]),
-                             long_name='x')
+                           long_name='x')
         cube.add_dim_coord(x_coord, 1)
-        z_coord = AuxCoord(points=np.arange(6).reshape(2,3),
-                             long_name='z')
+        z_coord = AuxCoord(points=np.arange(6).reshape(2, 3),
+                           long_name='z')
         cube.add_aux_coord(z_coord, [0, 1])
-        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2,3),
+        a_cell_measure = CellMeasure(points=np.arange(6).reshape(2, 3),
                                      long_name='area')
         cube.add_cell_measure(a_cell_measure, [0, 1])
         self.cube = cube
@@ -1286,8 +1286,6 @@ class Test_remove_metadata(tests.IrisTest):
         self.assertEqual(self.cube.coords('z'), [])
 
     def test_remove_cell_measure(self):
-        import pdb; pdb.set_trace()
-        print(self.cube)
         self.cube.remove_cell_measure(self.cube.cell_measure('area'))
         self.assertEqual(self.cube.cell_measures('area'), [])
 

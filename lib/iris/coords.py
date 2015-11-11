@@ -1659,23 +1659,26 @@ class CellMeasure(AuxCoord):
         #: have no meaning to Iris.
         self.attributes = attributes
 
-        #: ignore Coord CoordSystem functionality
-        self.coord_system = None
-
         self.points = points
-        #: ignore Coord bounds functionality
-        self.bounds = None
 
-    # @bounds.setter
-    # def bounds(self, bounds):
-    #     if bounds is not None:
-    #         raise AttributeError('CellMeasure instances do not have bounds')
+    @property
+    def bounds(self):
+        return None
 
-    # @bounds.setter
-    # def coord_system(self, coord_system):
-    #     if coord_system is not None:
-    #         raise AttributeError('CellMeasure instances do not have bounds')
+    @bounds.setter
+    def bounds(self, bounds):
+        if bounds is not None:
+            raise AttributeError('CellMeasure instances do not have bounds')
 
+    @property
+    def coord_system(self):
+        return None
+
+    @bounds.setter
+    def coord_system(self, coord_system):
+        if coord_system is not None:
+            raise AttributeError('CellMeasure instances do not have a '
+                                 'coord_system')
 
 
 class CellMethod(iris.util._OrderedHashable):
