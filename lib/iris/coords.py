@@ -1618,7 +1618,7 @@ class CellMeasure(AuxCoord):
     """
 
     def __init__(self, points, standard_name=None, long_name=None,
-                 var_name=None, units='1', attributes=None):
+                 var_name=None, units='1', attributes=None, measure=None):
 
         """
         Constructs a single cell measure.
@@ -1641,6 +1641,9 @@ class CellMeasure(AuxCoord):
             Can be a string, which will be converted to a Unit object.
         * attributes
             A dictionary containing other cf and user-defined attributes.
+        * measure
+            A string describing the type of measure.  'area' and 'volume'
+            are the only valid entries.
 
         """
         #: CF standard name of the quantity that the coordinate represents.
@@ -1660,6 +1663,18 @@ class CellMeasure(AuxCoord):
         self.attributes = attributes
 
         self.points = points
+
+        self.measure = measure
+
+    @property
+    def measure(self):
+        return self.measure
+
+    @measure.setter
+    def measure(self, measure):
+        if measure not in ['area', 'volume']:
+            raise ValueError('measure must be area or volume, '
+                             'not {}'.format(measure))
 
     @property
     def bounds(self):
