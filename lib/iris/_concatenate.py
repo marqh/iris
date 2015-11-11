@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2013 - 2015, Met Office
+# (C) British Crown Copyright 2013 - 2016, Met Office
 #
 # This file is part of Iris.
 #
@@ -321,6 +321,7 @@ class _CubeSignature(object):
         self.dim_metadata = []
         self.ndim = cube.ndim
         self.scalar_coords = []
+        self._cell_measures_and_dims = cube._cell_measures_and_dims
 
         # Determine whether there are any anonymous cube dimensions.
         covered = set(cube.coord_dims(coord)[0] for coord in self.dim_coords)
@@ -463,6 +464,12 @@ class _CubeSignature(object):
         if self.data_type != other.data_type:
             msgs.append(msg_template.format('Datatypes', '',
                                             self.data_type, other.data_type))
+
+        # Check _cell_measures_and_dims
+        if self._cell_measures_and_dims != other._cell_measures_and_dims:
+            msgs.append(msg_template.format('CellMeasures', '',
+                                            self._cell_measures_and_dims,
+                                            other._cell_measures_and_dims))
 
         match = not bool(msgs)
         if error_on_mismatch and not match:
@@ -660,9 +667,11 @@ class _ProtoCube(object):
 
             # Build the new cube.
             kwargs = cube_signature.defn._asdict()
+            new_cm_and_dims = self._cube._cell_measures_and_dims
             cube = iris.cube.Cube(data,
                                   dim_coords_and_dims=dim_coords_and_dims,
                                   aux_coords_and_dims=aux_coords_and_dims,
+                                  cell_measures_and_dims=new_cm_and_dims,
                                   **kwargs)
         else:
             # There are no other source-cubes to concatenate
