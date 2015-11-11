@@ -769,8 +769,8 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 cell_measure_change = False
                 for cm, dims in getattr(value, name):
                     for i, dim in enumerate(dims):
-                        if (len(self.shape) > dim and 
-                            self.shape[dim] != cm.points.shape[i]):
+                        if (len(self.shape) > dim and
+                           self.shape[dim] != cm.points.shape[i]):
                             cell_measure_change = True
                 if not cell_measure_change:
                     aname = '_{}'.format(name)
