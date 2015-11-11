@@ -225,7 +225,7 @@ class TestCellMeasures(tests.IrisTest):
         self.assertEqual(cube.cell_measures()[0].measure, 'area')
 
     def test_round_trip(self):
-        cube, = iris.load_raw(self.fname)
+        cube, = iris.load(self.fname)
         with self.temp_filename(suffix='.nc') as filename:
             iris.save(cube, filename, unlimited_dimensions=[])
             round_cube, = iris.load_raw(filename)
