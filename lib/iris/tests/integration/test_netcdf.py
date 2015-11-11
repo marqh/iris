@@ -231,7 +231,6 @@ class TestCellMeasures(tests.IrisTest):
             round_cube, = iris.load_raw(filename)
             self.assertEqual(len(round_cube.cell_measures()), 1)
             self.assertEqual(round_cube.cell_measures()[0].measure, 'area')
-            
 
 
 if __name__ == "__main__":
