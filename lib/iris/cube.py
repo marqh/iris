@@ -1082,7 +1082,6 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             The (name of the) coord to look for.
 
         """
-
         coord = self.coord(coord)
 
         # Search for existing coordinate (object) on the cube, faster lookup
@@ -1092,6 +1091,9 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         if not matches:
             matches = [dims for coord_, dims in self._aux_coords_and_dims if
                        coord_ is coord]
+        if not matches:
+            matches = [dims for cm_, dims in self._cell_measures_and_dims if
+                       cm_ is coord]
 
         # Search derived aux coords
         target_defn = coord._as_defn()
@@ -1384,11 +1386,16 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                                                              coord in coords))
             raise iris.exceptions.CoordinateNotFoundError(msg)
         elif len(coords) == 0:
-            bad_name = name or standard_name or long_name or \
-                (coord and coord.name()) or ''
-            msg = 'Expected to find exactly 1 %s coordinate, but found ' \
-                  'none.' % bad_name
-            raise iris.exceptions.CoordinateNotFoundError(msg)
+            if name_or_coord:
+                cell_measures = self.cell_measures(name_or_coord)
+                if len(cell_measures) == 1:
+                    coords = cell_measures
+            else:
+                bad_name = name or standard_name or long_name or \
+                    (coord and coord.name()) or ''
+                msg = 'Expected to find exactly 1 %s coordinate, but found ' \
+                      'none.' % bad_name
+                raise iris.exceptions.CoordinateNotFoundError(msg)
 
         return coords[0]
 
@@ -1476,6 +1483,8 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             elif cell_measure is not None:
                 if cm == cell_measure:
                     cell_measures.append(cm)
+            else:
+                cell_measures.append(cm)
         return cell_measures
 
 
@@ -1811,6 +1820,10 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             vector_derived_coords = [coord for coord in derived_coords if
                                      id(coord) not in scalar_coord_ids]
 
+            # cell measures
+            vector_cell_measures = [cm for cm in self.cell_measures() 
+                                    if cm.shape != (1,)]
+
             # Determine the cube coordinates that don't describe the cube and
             # are most likely erroneous.
             vector_coords = vector_dim_coords + vector_aux_coords + \
@@ -1911,14 +1924,16 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 summary += '\n     Derived coordinates:\n' + \
                     '\n'.join(derived_coord_summary)
                              
-             #
-             # Generate summary of cube cell measures attribute
-             #
- 
-             if self.cell_measures:
-                 summary += '\n     Cell Measures:\n'
+            #
+            # Generate summary of cube cell measures attribute
+            #
+            if vector_cell_measures:
+                cell_measure_summary, cube_header = vector_summary(
+                    vector_cell_measures, cube_header, max_line_offset)
+                summary += '\n     Cell Measures:\n'
+                summary += '\n'.join(cell_measure_summary)
                  
-                 summary += '%*s%s' % (indent, ' ', str(self.cell_measures))
+                #summary += '%*s%s' % (indent, ' ', str(self.cell_measures))
 
             #
             # Generate textual summary of cube scalar coordinates.
