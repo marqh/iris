@@ -37,7 +37,8 @@ class Test_CellMeasure(tests.IrisTest):
                                    standard_name='cell_area',
                                    long_name='measured_area',
                                    var_name='area',
-                                   attributes={'notes': '1m accuracy'})
+                                   attributes={'notes': '1m accuracy'},
+                                   measure='area')
 
     def test_no_bounds(self):
         msg = 'CellMeasure instances do not have bounds'
