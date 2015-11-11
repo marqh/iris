@@ -1240,5 +1240,21 @@ class Test_dtype(tests.IrisTest):
         self.assertTrue(cube.has_lazy_data())
 
 
+class Test_add_metadata(tests.IrisTest):
+    def test_add_dim_coord(self):
+        cube = Cube(np.arange(3))
+        x_coord = DimCoord(points=np.array([2, 3, 4]),
+                             long_name='x')
+        cube.add_dim_coord(x_coord, 0)
+        self.assertEqual(cube.coord('x'), x_coord)
+
+    def test_add_aux_coord(self):
+        cube = Cube(np.arange(6).reshape(2,3))
+        x_coord = AuxCoord(points=np.arange(6).reshape(2,3),
+                             long_name='x')
+        cube.add_aux_coord(x_coord, [0, 1])
+        self.assertEqual(cube.coord('x'), x_coord)
+
+
 if __name__ == '__main__':
     tests.main()

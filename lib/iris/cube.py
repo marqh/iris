@@ -700,6 +700,9 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         self._aux_coords_and_dims = []
         self._aux_factories = []
 
+        # Cell Measures
+        self._cell_measures_and_dims = []
+
         identities = set()
         if dim_coords_and_dims:
             dims = set()
@@ -858,7 +861,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             raise ValueError('Duplicate coordinates are not permitted.')
         self._add_unique_aux_coord(coord, data_dims)
 
-    def _add_unique_aux_coord(self, coord, data_dims):
+    def _check_multi_dim_metadata(self, metadata, data_dims, mtype):
         # Convert to a tuple of integers
         if data_dims is None:
             data_dims = tuple()
@@ -868,22 +871,26 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             data_dims = (int(data_dims),)
 
         if data_dims:
-            if len(data_dims) != coord.ndim:
+            if len(data_dims) != metadata.ndim:
                 msg = 'Invalid data dimensions: {} given, {} expected for ' \
-                      '{!r}.'.format(len(data_dims), coord.ndim, coord.name())
+                      '{!r}.'.format(len(data_dims), metadata.ndim, metadata.name())
                 raise ValueError(msg)
             # Check compatibility with the shape of the data
             for i, dim in enumerate(data_dims):
-                if coord.shape[i] != self.shape[dim]:
+                if metadata.shape[i] != self.shape[dim]:
                     msg = 'Unequal lengths. Cube dimension {} => {};' \
-                          ' coord {!r} dimension {} => {}.'
+                          ' metadata {!r} dimension {} => {}.'
                     raise ValueError(msg.format(dim, self.shape[dim],
-                                                coord.name(), i,
-                                                coord.shape[i]))
-        elif coord.shape != (1,):
+                                                metadata.name(), i,
+                                                metadata.shape[i]))
+        elif metadata.shape != (1,):
             raise ValueError('Missing data dimensions for multi-valued'
-                             ' coordinate {!r}'.format(coord.name()))
+                             ' {} {!r}'.format(mtype, coord.name()))
+        return data_dims
 
+    def _add_unique_aux_coord(self, coord, data_dims):
+        data_dims = self._check_multi_dim_metadata(coord, data_dims,
+                                                   'coordinate')
         self._aux_coords_and_dims.append([coord, data_dims])
 
     def add_aux_factory(self, aux_factory):
@@ -900,6 +907,39 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             raise TypeError('Factory must be a subclass of '
                             'iris.aux_factory.AuxCoordFactory.')
         self._aux_factories.append(aux_factory)
+
+    def add_cell_measure(self, cell_measure, data_dims=None):
+        """
+        Adds a CF cell measure to the cube.
+
+        Args:
+
+        * cell_meaasure
+            The :class:`iris.coords.CellMeasure`
+            instance to add to the cube.
+
+        Kwargs:
+
+        * data_dims
+            Integer or iterable of integers giving the data dimensions spanned
+            by the coordinate.
+
+        Raises a ValueError if a cell_measure with identical metadata already
+        exists on the cube.
+
+        See also 
+        :meth:`Cube.remove_cell_measure()<iris.cube.Cube.remove_cell_measure>`.
+
+        """
+        if self.cell_measure(cell_measure):
+            raise ValueError('Duplicate cell_measures are not permitted.')
+        self._add_unique_cell_measure(cell_measure, data_dims)
+
+    def _add_unique_cell_measure(self, cell_measure, data_dims):
+        data_dims = _check_multi_dim_metadata(self, cell_measure,
+                                              data_dims, 'cell_measure')
+        self._cell_measures_and_dims.append([cell_measure, data_dims])
+        
 
     def add_dim_coord(self, dim_coord, data_dim):
         """
@@ -985,6 +1025,24 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
 
         for factory in self.aux_factories:
             factory.update(coord)
+
+    def remove_cell_measure(self, cell_measure):
+        """
+        Removes a cell measure from the cube.
+
+        Args:
+
+        * cell_measure (CellMeasure)
+            The CellMeasure to remove from the cube.
+
+        See also 
+        :meth:`Cube.add_cell_measure()<iris.cube.Cube.add_cell_measure>`
+
+        """
+        self._cell_measures_and_dims = [(cell_measure_, dim) for cell_measure_, 
+                                        dim in self._cell_measures_and_dims
+                                        is not cell_measure]
+
 
     def replace_coord(self, new_coord):
         """
