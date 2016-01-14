@@ -41,7 +41,7 @@ class Tests(tests.IrisTest):
                                    measure='area')
 
     def test_invalid_measure(self):
-        msg = 'measure must be area or volume, not length'
+        msg = "measure must be 'area' or 'volume', not length"
         with self.assertRaisesRegexp(ValueError, msg):
             self.measure.measure = 'length'
 
