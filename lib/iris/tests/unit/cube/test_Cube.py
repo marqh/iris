@@ -1309,7 +1309,11 @@ class Test_remove_metadata(tests.IrisTest):
         cube.add_aux_coord(z_coord, [0, 1])
         a_cell_measure = CellMeasure(data=np.arange(6).reshape(2, 3),
                                      long_name='area', measure='area')
+        self.b_cell_measure = CellMeasure(data=np.arange(6).reshape(2, 3),
+                                          long_name='other_area',
+                                          measure='area')
         cube.add_cell_measure(a_cell_measure, [0, 1])
+        cube.add_cell_measure(self.b_cell_measure, [0, 1])
         self.cube = cube
 
     def test_remove_dim_coord(self):
@@ -1322,7 +1326,8 @@ class Test_remove_metadata(tests.IrisTest):
 
     def test_remove_cell_measure(self):
         self.cube.remove_cell_measure(self.cube.cell_measure('area'))
-        self.assertEqual(self.cube.cell_measures('area'), [])
+        self.assertEqual(self.cube._cell_measures_and_dims,
+                         [[self.b_cell_measure, (0, 1)]])
 
 
 class Test__getitem_CellMeasure(tests.IrisTest):

@@ -952,9 +952,6 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         """
         if self.cell_measures(cell_measure):
             raise ValueError('Duplicate cell_measures are not permitted.')
-        self._add_unique_cell_measure(cell_measure, data_dims)
-
-    def _add_unique_cell_measure(self, cell_measure, data_dims):
         data_dims = self._check_multi_dim_metadata(cell_measure, data_dims,
                                                    'cell_measure')
         self._cell_measures_and_dims.append([cell_measure, data_dims])
@@ -1057,7 +1054,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         :meth:`Cube.add_cell_measure()<iris.cube.Cube.add_cell_measure>`
 
         """
-        self._cell_measures_and_dims = [(cell_measure_, dim) for cell_measure_,
+        self._cell_measures_and_dims = [[cell_measure_, dim] for cell_measure_,
                                         dim in self._cell_measures_and_dims
                                         if cell_measure_ is not cell_measure]
 
@@ -1531,9 +1528,9 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
 
         if len(cell_measures) > 1:
             msg = ('Expected to find exactly 1 cell_measure, but found {}. '
-                  'They were: {}.')
+                   'They were: {}.')
             msg = msg.format(len(cell_measures),
-                              ', '.join(cm.name() for cm in cell_measures))
+                             ', '.join(cm.name() for cm in cell_measures))
             raise iris.exceptions.CellMeasureNotFoundError(msg)
         elif len(cell_measures) == 0:
             if isinstance(name_or_cell_measure, six.string_types):
