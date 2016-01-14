@@ -903,8 +903,9 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                                                 metadata.name(), i,
                                                 metadata.shape[i]))
         elif metadata.shape != (1,):
-            raise ValueError('Missing data dimensions for multi-valued'
-                             ' {} {!r}'.format(mtype, metadata.name()))
+            msg = 'Missing data dimensions for multi-valued {} {!r}'
+            msg = msg.format(metadata.__class__.__name__, metadata.name())
+            raise ValueError(msg)
         return data_dims
 
     def _add_unique_aux_coord(self, coord, data_dims):
