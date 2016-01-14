@@ -35,7 +35,7 @@ from iris.analysis import WeightedAggregator, Aggregator
 from iris.analysis import MEAN
 from iris.cube import Cube
 from iris.coords import AuxCoord, DimCoord, CellMeasure
-from iris.exceptions import CoordinateNotFoundError
+from iris.exceptions import CoordinateNotFoundError, CellMeasureNotFoundError
 from iris.tests import mock
 import iris.tests.stock as stock
 
@@ -1353,6 +1353,56 @@ class Test__getitem_CellMeasure(tests.IrisTest):
         self.assertEqual(len(result.cell_measures()), 1)
         self.assertEqual(result.shape,
                          result.cell_measures()[0].data.shape)
+
+
+class TestCellMeasures(tests.IrisTest):
+    def setUp(self):
+        cube = Cube(np.arange(6).reshape(2, 3))
+        x_coord = DimCoord(points=np.array([2, 3, 4]),
+                           long_name='x')
+        cube.add_dim_coord(x_coord, 1)
+        z_coord = AuxCoord(points=np.arange(6).reshape(2, 3),
+                           long_name='z')
+        cube.add_aux_coord(z_coord, [0, 1])
+        self.a_cell_measure = CellMeasure(data=np.arange(6).reshape(2, 3),
+                                          long_name='area', measure='area',
+                                          units='m2')
+        cube.add_cell_measure(self.a_cell_measure, [0, 1])
+        self.cube = cube
+
+    def test_get_cell_measure(self):
+        cm = self.cube.cell_measure('area')
+        self.assertEqual(cm, self.a_cell_measure)
+
+    def test_get_cell_measures(self):
+        cms = self.cube.cell_measures()
+        self.assertEqual(len(cms), 1)
+        self.assertEqual(cms[0], self.a_cell_measure)
+
+    def test_get_cell_measures_obj(self):
+        cms = self.cube.cell_measures(self.a_cell_measure)
+        self.assertEqual(len(cms), 1)
+        self.assertEqual(cms[0], self.a_cell_measure)
+
+    def test_fail_get_cell_measure(self):
+        with self.assertRaises(CellMeasureNotFoundError):
+            cm = self.cube.cell_measure('notarea')
+
+    def test_fail_get_cell_measures_obj(self):
+        a_cell_measure = self.a_cell_measure.copy()
+        a_cell_measure.units = 'km2'
+        with self.assertRaises(CellMeasureNotFoundError):
+            cms = self.cube.cell_measure(a_cell_measure)
+
+    def test_cell_measure_dims(self):
+        cm_dims = self.cube.cell_measure_dims(self.a_cell_measure)
+        self.assertEqual(cm_dims, (0, 1))
+
+    def test_fail_cell_measure_dims(self):
+        a_cell_measure = self.a_cell_measure.copy()
+        a_cell_measure.units = 'km2'
+        with self.assertRaises(CellMeasureNotFoundError):
+            cm_dims = self.cube.cell_measure_dims(a_cell_measure)
 
 
 if __name__ == '__main__':

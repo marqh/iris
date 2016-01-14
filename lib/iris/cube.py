@@ -933,7 +933,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
 
         Args:
 
-        * cell_meaasure
+        * cell_measure
             The :class:`iris.coords.CellMeasure`
             instance to add to the cube.
 
@@ -1114,7 +1114,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                        factories]
 
         if not matches:
-            raise iris.exceptions.CellMeasureNotFoundError(coord.name())
+            raise iris.exceptions.CoordinateNotFoundError(coord.name())
 
         return matches[0]
 
@@ -1133,7 +1133,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                    cm_ is cell_measure]
 
         if not matches:
-            raise iris.exceptions.CoordinateNotFoundError(coord.name())
+            raise iris.exceptions.CellMeasureNotFoundError(cell_measure.name())
 
         return matches[0]
 
@@ -1499,7 +1499,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         else:
             cell_measure = name_or_cell_measure
         cell_measures = []
-        for cm, dims in self._cell_measures_and_dims:
+        for cm, _ in self._cell_measures_and_dims:
             if name is not None:
                 if cm.name() == name:
                     cell_measures.append(cm)
@@ -1530,16 +1530,17 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         cell_measures = self.cell_measures(name_or_cell_measure)
 
         if len(cell_measures) > 1:
-            msg = 'Expected to find exactly 1 cell_measure, but found %s. ' \
-                  'They were: {}.'.format(len(cell_measures),
-                                          ', '.join(cm.name() for cm in
-                                                    cell_measures))
+            msg = ('Expected to find exactly 1 cell_measure, but found {}. '
+                  'They were: {}.')
+            msg = msg.format(len(cell_measures),
+                              ', '.join(cm.name() for cm in cell_measures))
             raise iris.exceptions.CellMeasureNotFoundError(msg)
         elif len(cell_measures) == 0:
             if isinstance(name_or_cell_measure, six.string_types):
-                bad_name = name
+                bad_name = name_or_cell_measure
             else:
-                bad_name = (cell_measure and cell_measure.name()) or ''
+                bad_name = (name_or_cell_measure and
+                            name_or_cell_measure.name()) or ''
             msg = 'Expected to find exactly 1 %s cell_measure, but found ' \
                   'none.' % bad_name
             raise iris.exceptions.CellMeasureNotFoundError(msg)

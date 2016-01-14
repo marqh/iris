@@ -160,7 +160,7 @@ class Cell(collections.namedtuple('Cell', ['point', 'bound'])):
     only if, it is within the Cell (including on the boundary). The
     relative comparisons (lt, le, ..) are defined to be consistent with
     this interpretation. So for a given value `n` and Cell `cell`, only
-    one f the following can be true:
+    one of the following can be true:
 
     |    n < cell
     |    n == cell
@@ -1659,7 +1659,7 @@ class CellMeasure(six.with_metaclass(ABCMeta, CFVariableMixin)):
             The :class:`~cf_units.Unit` of the coordinate's values.
             Can be a string, which will be converted to a Unit object.
         * attributes
-            A dictionary containing other cf and user-defined attributes.
+            A dictionary containing other CF and user-defined attributes.
         * measure
             A string describing the type of measure.  'area' and 'volume'
             are the only valid entries.
@@ -1718,7 +1718,7 @@ class CellMeasure(six.with_metaclass(ABCMeta, CFVariableMixin)):
     @property
     def shape(self):
         """The fundamental shape of the Cell Measure, expressed as a tuple."""
-        # Access the underlying _points attribute to avoid triggering
+        # Access the underlying _data attribute to avoid triggering
         # a deferred load unnecessarily.
         return self._data.shape
 
@@ -1728,13 +1728,13 @@ class CellMeasure(six.with_metaclass(ABCMeta, CFVariableMixin)):
         Return the number of dimensions of the cell measure.
 
         """
-        return len(self.shape)
+        return self._data.ndim
 
     @measure.setter
     def measure(self, measure):
         if measure not in ['area', 'volume']:
-            raise ValueError('measure must be area or volume, '
-                             'not {}'.format(measure))
+            raise ValueError("measure must be 'area' or 'volume', "
+                             "not {}".format(measure))
         self._measure = measure
 
     def __getitem__(self, key):
@@ -1752,9 +1752,8 @@ class CellMeasure(six.with_metaclass(ABCMeta, CFVariableMixin)):
         # and _bounds to full ndarray instances.
         def is_full_slice(s):
             return isinstance(s, slice) and s == slice(None, None)
-        if all(is_full_slice(s) for s in full_slice):
-            data = self._data
-        else:
+        data = self._data
+        if not all(is_full_slice(s) for s in full_slice):
             data = self._data
 
             # Make indexing on the cube column based by using the
@@ -1817,8 +1816,8 @@ class CellMeasure(six.with_metaclass(ABCMeta, CFVariableMixin)):
         return result
 
     def _as_defn(self):
-        defn = CoordDefn(self.standard_name, self.long_name, self.var_name,
-                         self.units, self.attributes, self.measure)
+        defn = (self.standard_name, self.long_name, self.var_name,
+                self.units, self.attributes, self.measure)
         return defn
 
     def __eq__(self, other):
