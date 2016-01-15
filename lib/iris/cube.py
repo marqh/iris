@@ -956,6 +956,8 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         data_dims = self._check_multi_dim_metadata(cell_measure, data_dims,
                                                    'cell_measure')
         self._cell_measures_and_dims.append([cell_measure, data_dims])
+        self._cell_measures_and_dims.sort(key=lambda (cm, dims):
+                                          (cm._as_defn(), dims))
 
     def add_dim_coord(self, dim_coord, data_dim):
         """
