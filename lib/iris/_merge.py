@@ -1476,7 +1476,8 @@ class ProtoCube(object):
                                for coord, dims in self._aux_coords_and_dims]
         kwargs = dict(zip(iris.cube.CubeMetadata._fields, signature.defn))
 
-        cms_and_dims = self._cell_measures_and_dims.copy()
+        cms_and_dims = [(deepcopy(cm), dims)
+                        for cm, dims in self._cell_measures_and_dims]
         cube = iris.cube.Cube(data,
                               dim_coords_and_dims=dim_coords_and_dims,
                               aux_coords_and_dims=aux_coords_and_dims,

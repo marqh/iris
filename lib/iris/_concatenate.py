@@ -667,7 +667,8 @@ class _ProtoCube(object):
 
             # Build the new cube.
             kwargs = cube_signature.defn._asdict()
-            new_cm_and_dims = self._cube._cell_measures_and_dims
+            new_cm_and_dims = [(deepcopy(cm), dims)
+                               for cm, dims in self._cube._cell_measures_and_dims]
             cube = iris.cube.Cube(data,
                                   dim_coords_and_dims=dim_coords_and_dims,
                                   aux_coords_and_dims=aux_coords_and_dims,
