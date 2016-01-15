@@ -2024,6 +2024,15 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
                 summary += '\n     Invalid coordinates:\n' + \
                     '\n'.join(invalid_summary)
 
+            # cell measures
+            scalar_cell_measures = [cm for cm in self.cell_measures()
+                                    if cm.shape == (1,)]
+            if scalar_cell_measures:
+                summary += '\n    Scalar cell measures:\n'
+                scalar_cms = ['          {}'.format(cm.name())
+                              for cm in scalar_cell_measures]
+                summary += '\n'.join(scalar_cms)
+
             #
             # Generate summary of cube attributes.
             #
@@ -2174,14 +2183,13 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         for factory in self.aux_factories:
             cube.add_aux_factory(factory.updated(coord_mapping))
 
-        # slice the cell measures, if changed and add them to the cube
-        if self._cell_measures_and_dims != cube._cell_measures_and_dims:
-            for cellmeasure in self.cell_measures():
-                dims = self.cell_measure_dims(cellmeasure)
-                cm_keys = tuple([full_slice[dim] for dim in dims])
-                new_cm = cellmeasure[cm_keys]
-                cube.add_cell_measure(new_cm,
-                                      new_cell_measure_dims(cellmeasure))
+        # slice the cell measures and add them to the cube
+        for cellmeasure in self.cell_measures():
+            dims = self.cell_measure_dims(cellmeasure)
+            cm_keys = tuple([full_slice[dim] for dim in dims])
+            new_cm = cellmeasure[cm_keys]
+            cube.add_cell_measure(new_cm,
+                                  new_cell_measure_dims(cellmeasure))
 
         return cube
 

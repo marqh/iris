@@ -334,6 +334,9 @@ class _CubeSignature(namedtuple('CubeSignature',
         The value to be used to mark missing data in the data payload,
         or None if no such value exists.
 
+    * cell_measures_and_dims:
+        A list of cell_measures and dims for the cube.
+
     """
 
     __slots__ = ()
@@ -1473,11 +1476,11 @@ class ProtoCube(object):
                                for coord, dims in self._aux_coords_and_dims]
         kwargs = dict(zip(iris.cube.CubeMetadata._fields, signature.defn))
 
-        cmds = self._cell_measures_and_dims
+        cms_and_dims = self._cell_measures_and_dims.copy()
         cube = iris.cube.Cube(data,
                               dim_coords_and_dims=dim_coords_and_dims,
                               aux_coords_and_dims=aux_coords_and_dims,
-                              cell_measures_and_dims=cmds,
+                              cell_measures_and_dims=cms_and_dims,
                               **kwargs)
 
         # Add on any aux coord factories.

@@ -301,7 +301,7 @@ def concatenate(cubes, error_on_mismatch=False):
 class _CubeSignature(object):
     """
     Template for identifying a specific type of :class:`iris.cube.Cube` based
-    on its metadata and coordinates.
+    on its metadata, coordinates and cell_measures.
 
     """
     def __init__(self, cube):
@@ -321,7 +321,7 @@ class _CubeSignature(object):
         self.dim_metadata = []
         self.ndim = cube.ndim
         self.scalar_coords = []
-        self._cell_measures_and_dims = cube._cell_measures_and_dims
+        self.cell_measures_and_dims = cube._cell_measures_and_dims
 
         # Determine whether there are any anonymous cube dimensions.
         covered = set(cube.coord_dims(coord)[0] for coord in self.dim_coords)
@@ -466,10 +466,10 @@ class _CubeSignature(object):
                                             self.data_type, other.data_type))
 
         # Check _cell_measures_and_dims
-        if self._cell_measures_and_dims != other._cell_measures_and_dims:
+        if self.cell_measures_and_dims != other.cell_measures_and_dims:
             msgs.append(msg_template.format('CellMeasures', '',
-                                            self._cell_measures_and_dims,
-                                            other._cell_measures_and_dims))
+                                            self.cell_measures_and_dims,
+                                            other.cell_measures_and_dims))
 
         match = not bool(msgs)
         if error_on_mismatch and not match:

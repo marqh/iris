@@ -41,7 +41,7 @@ class CoordinateNotFoundError(KeyError):
 
 
 class CellMeasureNotFoundError(KeyError):
-    """Raised when a search yields no coordinates."""
+    """Raised when a search yields no cell measures."""
     pass
 
 
