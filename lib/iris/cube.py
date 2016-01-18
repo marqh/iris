@@ -879,7 +879,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
             raise ValueError('Duplicate coordinates are not permitted.')
         self._add_unique_aux_coord(coord, data_dims)
 
-    def _check_multi_dim_metadata(self, metadata, data_dims, mtype):
+    def _check_multi_dim_metadata(self, metadata, data_dims):
         # Convert to a tuple of integers
         if data_dims is None:
             data_dims = tuple()
@@ -909,8 +909,7 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         return data_dims
 
     def _add_unique_aux_coord(self, coord, data_dims):
-        data_dims = self._check_multi_dim_metadata(coord, data_dims,
-                                                   'coordinate')
+        data_dims = self._check_multi_dim_metadata(coord, data_dims)
         self._aux_coords_and_dims.append([coord, data_dims])
 
     def add_aux_factory(self, aux_factory):
@@ -953,11 +952,10 @@ bound=(1994-12-01 00:00:00, 1998-12-01 00:00:00)
         """
         if self.cell_measures(cell_measure):
             raise ValueError('Duplicate cell_measures are not permitted.')
-        data_dims = self._check_multi_dim_metadata(cell_measure, data_dims,
-                                                   'cell_measure')
+        data_dims = self._check_multi_dim_metadata(cell_measure, data_dims)
         self._cell_measures_and_dims.append([cell_measure, data_dims])
-        self._cell_measures_and_dims.sort(key=lambda cmdims:
-                                          (cmdims[0]._as_defn(), cmdims[1]))
+        self._cell_measures_and_dims.sort(key=lambda cm_dims:
+                                          (cm_dims[0]._as_defn(), cm_dims[1]))
 
     def add_dim_coord(self, dim_coord, data_dim):
         """
