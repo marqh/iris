@@ -30,6 +30,7 @@ from iris.experimental.fieldsfile import load
 
 
 @tests.skip_data
+@tests.skip_vdep
 class TestStructuredLoadFF(tests.IrisTest):
     def setUp(self):
         self.fname = tests.get_data_path(('FF', 'structured', 'small'))
@@ -46,6 +47,7 @@ class TestStructuredLoadFF(tests.IrisTest):
 
 
 @tests.skip_data
+@tests.skip_vdep
 class TestStructuredLoadPP(tests.IrisTest):
     def setUp(self):
         self.fname = tests.get_data_path(('PP', 'structured', 'small.pp'))
