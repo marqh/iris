@@ -84,6 +84,7 @@ class TestAsSeries(tests.IrisTest):
             str(series),
             tests.get_result_path(('pandas', 'as_series', 'masked.txt')))
 
+    @tests.skip_vdep
     def test_time_gregorian(self):
         cube = Cube(np.array([0, 1, 2, 3, 4]), long_name="ts")
         time_coord = DimCoord([0, 100.1, 200.2, 300.3, 400.4],
@@ -97,6 +98,7 @@ class TestAsSeries(tests.IrisTest):
             tests.get_result_path(('pandas', 'as_series',
                                   'time_gregorian.txt')))
 
+    @tests.skip_vdep
     def test_time_360(self):
         cube = Cube(np.array([0, 1, 2, 3, 4]), long_name="ts")
         time_unit = cf_units.Unit("days since 2000-01-01 00:00",
@@ -212,6 +214,7 @@ class TestAsDataFrame(tests.IrisTest):
             tests.get_result_path(('pandas', 'as_dataframe',
                                    'masked.txt')))
 
+    @tests.skip_vdep
     def test_time_gregorian(self):
         cube = Cube(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]),
                     long_name="ts")

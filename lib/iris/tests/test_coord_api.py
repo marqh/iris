@@ -265,10 +265,12 @@ class TestCoord_ReprStr_time(tests.IrisTest):
         self.assertRepr(self.time,
                         ('coord_api', 'str_repr', 'aux_time_repr.txt'))
 
+    @tests.skip_vdep
     def test_DimCoord_str(self):
         self.assertString(str(self.time),
                           ('coord_api', 'str_repr', 'dim_time_str.txt'))
 
+    @tests.skip_vdep
     def test_AuxCoord_str(self):
         self.assertString(str(self.time),
                           ('coord_api', 'str_repr', 'aux_time_str.txt'))

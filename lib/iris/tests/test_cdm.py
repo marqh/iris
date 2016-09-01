@@ -214,6 +214,7 @@ class TestBasicCubeConstruction(tests.IrisTest):
             dims[0] = 1
 
 
+@tests.skip_vdep
 class TestStockCubeStringRepresentations(tests.IrisTest):
     def setUp(self):
         self.cube = iris.tests.stock.realistic_4d()
