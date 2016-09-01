@@ -583,6 +583,7 @@ class TestNetCDFSave(tests.IrisTest):
                            ('netcdf', 'netcdf_save_load_hybrid_height.cml'))
 
     @tests.skip_data
+    @tests.skip_vdep
     def test_netcdf_save_ndim_auxiliary(self):
         # Test saving CF-netCDF with multi-dimensional auxiliary coordinates.
         # Read netCDF input file.
