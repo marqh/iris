@@ -108,6 +108,7 @@ class TestQuickplotCoordinatesGiven(test_plot.TestPlotCoordinatesGiven):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class TestLabels(tests.GraphicsTest):
     def setUp(self):
         self.theta = _load_theta()

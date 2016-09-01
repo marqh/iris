@@ -184,6 +184,7 @@ class TestBasicLoad(tests.GraphicsTest):
 
 @tests.skip_data
 @tests.skip_grib
+@tests.skip_vdep
 class TestIjDirections(tests.GraphicsTest):
     @staticmethod
     def _old_compat_load(name):

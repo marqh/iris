@@ -60,6 +60,7 @@ class TestBasic(tests.GraphicsTest):
         iplt.pcolor(cube)
         self.check_graphic()
 
+    @tests.skip_vdep
     def test_unmappable(self):
         cube = self.cube[0, 0]
         cube.coord('grid_longitude').standard_name = None

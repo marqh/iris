@@ -693,6 +693,7 @@ class LambdaStr(object):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class TestPlotCoordinatesGiven(tests.GraphicsTest):
     def setUp(self):
         filename = tests.get_data_path(('PP', 'COLPEX',

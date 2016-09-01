@@ -59,6 +59,7 @@ class TestTrajectory(tests.IrisTest):
 
     @tests.skip_data
     @tests.skip_plot
+    @tests.skip_vdep
     def test_trajectory_extraction(self):
 
         # Load the COLPEX data => TZYX
