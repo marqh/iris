@@ -240,6 +240,7 @@ class Test1dPlotMultiArgs(tests.GraphicsTest):
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class Test1dQuickplotPlotMultiArgs(Test1dPlotMultiArgs):
     # tests for iris.plot using multi-argument calling convention
 
