@@ -80,6 +80,7 @@ class TestBasic(tests.GraphicsTest):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class TestUnmappable(tests.GraphicsTest):
     def setUp(self):
         src_cube = iris.tests.stock.global_pp()
