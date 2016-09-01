@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestCustomFileLoading(tests.GraphicsTest):
     """Test the custom_file_loading example code."""
     def test_custom_file_loading(self):

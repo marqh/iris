@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestCrossSection(tests.GraphicsTest):
     """Test the cross_section example code."""
     def test_cross_section(self):

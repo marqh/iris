@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestWindSpeed(tests.GraphicsTest):
     """Test the wind_speed example code."""
     def test_wind_speed(self):

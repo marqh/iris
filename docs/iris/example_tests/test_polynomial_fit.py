@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestPolynomialFit(tests.GraphicsTest):
     """Test the polynomial_fit example code."""
     def test_polynomial_fit(self):

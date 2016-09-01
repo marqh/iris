@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestRotatedPoleMapping(tests.GraphicsTest):
     """Test the rotated_pole_mapping example code."""
     def test_rotated_pole_mapping(self):

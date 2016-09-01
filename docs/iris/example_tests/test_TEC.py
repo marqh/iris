@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestTEC(tests.GraphicsTest):
     """Test the TEC example code."""
     def test_TEC(self):

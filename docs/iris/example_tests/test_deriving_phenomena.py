@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestDerivingPhenomena(tests.GraphicsTest):
     """Test the deriving_phenomena example code."""
     def test_deriving_phenomena(self):

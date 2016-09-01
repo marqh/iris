@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestCOP1DPlot(tests.GraphicsTest):
     """Test the COP_1d_plot example code."""
     def test_COP_1d_plot(self):

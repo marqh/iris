@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestLaggedEnsemble(tests.GraphicsTest):
     """Test the lagged ensemble example code."""
     def test_lagged_ensemble(self):

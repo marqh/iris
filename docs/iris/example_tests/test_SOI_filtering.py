@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestSOIFiltering(tests.GraphicsTest):
     """Test the SOI_filtering example code."""
     def test_soi_filtering(self):

@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestCustomAggregation(tests.GraphicsTest):
     """Test the custom aggregation example code."""
     def test_custom_aggregation(self):

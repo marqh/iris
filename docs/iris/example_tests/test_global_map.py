@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestGlobalMap(tests.GraphicsTest):
     """Test the global_map example code."""
     def test_global_map(self):

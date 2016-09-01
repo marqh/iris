@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestCOPMaps(tests.GraphicsTest):
     """Test the COP_maps example code."""
     def test_cop_maps(self):

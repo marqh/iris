@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestAnomalyLogColouring(tests.GraphicsTest):
     """Test the anomaly colouring example code."""
     def test_anomaly_log_colouring(self):

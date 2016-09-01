@@ -29,6 +29,7 @@ with extest_util.add_examples_to_path():
     import coriolis_plot
 
 
+@tests.skip_vdep
 class TestCoriolisPlot(tests.GraphicsTest):
     """Test the Coriolis Plot example code."""
     def test_coriolis_plot(self):

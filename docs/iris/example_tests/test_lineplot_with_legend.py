@@ -27,6 +27,7 @@ from .extest_util import (add_examples_to_path,
                           fail_any_deprecation_warnings)
 
 
+@tests.skip_vdep
 class TestLineplotWithLegend(tests.GraphicsTest):
     """Test the lineplot_with_legend example code."""
     def test_lineplot_with_legend(self):
