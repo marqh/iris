@@ -136,6 +136,7 @@ class TestProjection(tests.IrisTest):
                 'SPHEROID["unnamed",6377000,0]],PRIMEM["Greenwich",0],'
                 'UNIT["degree",0.0174532925199433]]')
 
+    @tests.skip_vdep
     def test_ellipsoid(self):
         cube = self._cube(GeogCS(6377000, 6360000))
         with self.temp_filename('.tif') as temp_filename:
