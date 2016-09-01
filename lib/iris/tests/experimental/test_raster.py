@@ -92,6 +92,7 @@ class TestGeoTiffExport(tests.IrisTest):
         cube.data = cube.data[::-1, :]
         self.check_tiff(cube, tif_header)
 
+    @tests.skip_vdep
     def test_masked(self):
         tif_header = 'SMALL_total_column_co2.nc.ma.tif_header.txt'
         fin = tests.get_data_path(('NetCDF', 'global', 'xyt',
