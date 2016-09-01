@@ -36,6 +36,7 @@ import iris.tests.stock
 
 
 @tests.skip_data
+@tests.skip_vdep
 class TestBasicMaths(tests.IrisTest):
     def setUp(self):
         self.cube = iris.tests.stock.global_pp()
@@ -357,6 +358,7 @@ class TestBasicMaths(tests.IrisTest):
 
 
 @tests.skip_data
+@tests.skip_vdep
 class TestDivideAndMultiply(tests.IrisTest):
     def setUp(self):
         self.cube = iris.tests.stock.global_pp()
@@ -500,6 +502,7 @@ class TestDivideAndMultiply(tests.IrisTest):
 
 
 @tests.skip_data
+@tests.skip_vdep
 class TestExponentiate(tests.IrisTest):
     def setUp(self):
         self.cube = iris.tests.stock.global_pp()
