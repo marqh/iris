@@ -321,6 +321,7 @@ class Test1dScatter(tests.GraphicsTest):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class Test1dQuickplotScatter(Test1dScatter):
 
     def setUp(self):
