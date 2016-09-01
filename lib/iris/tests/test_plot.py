@@ -50,6 +50,7 @@ def simple_cube():
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class TestSimple(tests.GraphicsTest):
     def test_points(self):
         cube = simple_cube()
@@ -71,11 +72,13 @@ class TestMissingCoord(tests.GraphicsTest):
         qplt.pcolor(cube)
         self.check_graphic()
 
+    @tests.skip_vdep
     def test_no_u(self):
         cube = simple_cube()
         cube.remove_coord('grid_longitude')
         self._check(cube)
 
+    @tests.skip_vdep
     def test_no_v(self):
         cube = simple_cube()
         cube.remove_coord('time')
@@ -102,6 +105,7 @@ class TestMissingCS(tests.GraphicsTest):
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class TestHybridHeight(tests.GraphicsTest):
     def setUp(self):
         self.cube = iris.tests.stock.realistic_4d()[0, :15, 0, :]
@@ -150,6 +154,7 @@ class TestHybridHeight(tests.GraphicsTest):
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class Test1dPlotMultiArgs(tests.GraphicsTest):
     # tests for iris.plot using multi-argument calling convention
 
@@ -326,6 +331,7 @@ class Test1dQuickplotScatter(Test1dScatter):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class TestAttributePositive(tests.GraphicsTest):
     def test_1d_positive_up(self):
         path = tests.get_data_path(('NetCDF', 'ORCA2', 'votemper.nc'))
@@ -423,6 +429,7 @@ def _date_series(src_cube):
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class SliceMixin(object):
     """Mixin class providing tests for each 2-dimensional permutation of axes.
 
@@ -599,6 +606,7 @@ class TestPcolormeshNoBounds(six.with_metaclass(CheckForWarningsMetaclass,
 
 
 @tests.skip_plot
+@tests.skip_vdep
 class Slice1dMixin(object):
     """Mixin class providing tests for each 1-dimensional permutation of axes.
 

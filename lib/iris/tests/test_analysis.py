@@ -548,6 +548,7 @@ class TestRotatedPole(tests.GraphicsTest):
         plt.scatter(rlons, rlats)
         self.check_graphic()
 
+    @tests.skip_vdep
     def test_all(self):
         path = tests.get_data_path(('PP', 'ukVorog', 'ukv_orog_refonly.pp'))
         master_cube = iris.load_cube(path)

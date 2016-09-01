@@ -183,6 +183,7 @@ class TestLabels(tests.GraphicsTest):
 
 @tests.skip_data
 @tests.skip_plot
+@tests.skip_vdep
 class TestTimeReferenceUnitsLabels(tests.GraphicsTest):
 
     def setUp(self):

@@ -368,6 +368,7 @@ class TestAreaWeightedRegrid(tests.GraphicsTest):
         self.assertCMLApproxData(res, RESULT_DIR + ('higher.cml',))
 
     @tests.skip_plot
+    @tests.skip_vdep
     def test_hybrid_height(self):
         src = self.realistic_cube
         dest = _resampled_grid(src, 0.7, 0.8)
@@ -444,6 +445,7 @@ class TestAreaWeightedRegrid(tests.GraphicsTest):
             self.assertTrue(res, src[indices])
 
     @tests.skip_plot
+    @tests.skip_vdep
     def test_cross_section(self):
         # Slice to get a cross section.
         # Constant latitude
