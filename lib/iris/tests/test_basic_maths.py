@@ -659,6 +659,7 @@ class TestMaskedArrays(tests.IrisTest):
 
             np.testing.assert_array_equal(result1.data, result2)
 
+    @tests.skip_vdep
     def test_operator_in_place(self):
         for test_op in self.iops:
             test_op(self.cube1, self.cube2)

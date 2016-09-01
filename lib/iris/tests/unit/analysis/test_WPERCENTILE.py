@@ -133,6 +133,7 @@ class Test_aggregate(tests.IrisTest):
         expected[::2] = data[1, ::2]
         self.assertArrayEqual(actual, expected)
 
+    @tests.skip_vdep
     def test_2d_multi(self):
         shape = (2, 10)
         data = np.arange(np.prod(shape)).reshape(shape)
@@ -147,6 +148,7 @@ class Test_aggregate(tests.IrisTest):
         expected[:, -1] += 10.
         self.assertArrayAlmostEqual(actual, expected)
 
+    @tests.skip_vdep
     def test_masked_2d_multi(self):
         shape = (3, 10)
         data = ma.arange(np.prod(shape)).reshape(shape)

@@ -291,6 +291,7 @@ class Test(tests.IrisTest):
         mask = np.array([[False, False], [False, True]])
         self.assertArrayEqual(result.data.mask, mask)
 
+    @tests.skip_vdep
     def test_misaligned_src_x_negative(self):
         self.src.add_aux_coord(self.src_y, (0, 1))
         self.src.add_aux_coord(self.src_x_negative, (0, 1))
@@ -306,6 +307,7 @@ class Test(tests.IrisTest):
         mask = np.array([[False, False], [False, False]])
         self.assertArrayEqual(result.data.mask, mask)
 
+    @tests.skip_vdep
     def test_misaligned_src_x_negative_mask(self):
         self.src.add_aux_coord(self.src_y, (0, 1))
         self.src.add_aux_coord(self.src_x_negative, (0, 1))
@@ -323,6 +325,7 @@ class Test(tests.IrisTest):
         mask = np.array([[False, False], [False, False]])
         self.assertArrayEqual(result.data.mask, mask)
 
+    @tests.skip_vdep
     def test_misaligned_tgt_dec(self):
         self.src.add_aux_coord(self.src_y, (0, 1))
         self.src.add_aux_coord(self.src_x_negative, (0, 1))
