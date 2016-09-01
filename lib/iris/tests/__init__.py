@@ -103,6 +103,26 @@ except ImportError:
 else:
     SAMPLE_DATA_AVAILABLE = True
 
+# Flag to skip tests known as underpinning library version dependent
+SKIP_VERSION_DEPENDENT_TEST = True
+
+def skip_vdep(fn):
+    """
+    Decorator to choose whether to run tests, based on knowledge that it is
+    version dependent.
+
+    Example usage:
+        @skip_vdep
+        class MyDataTests(tests.IrisTest):
+            ...
+
+    """
+
+    skip = unittest.skipIf(
+        condition=SKIP_VERSION_DEPENDENT_TEST,
+        reason='Test(s) are version dependent.')
+
+    return skip(fn)
 
 #: Basepath for test results.
 _RESULT_PATH = os.path.join(os.path.dirname(__file__), 'results')
