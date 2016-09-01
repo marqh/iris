@@ -38,6 +38,7 @@ from iris.tests import mock
 import iris.tests.stock as stock
 
 
+@tests.skip_vdep
 class Test_write(tests.IrisTest):
     def _transverse_mercator_cube(self, ellipsoid=None):
         data = np.arange(12).reshape(3, 4)

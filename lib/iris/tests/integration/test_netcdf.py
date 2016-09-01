@@ -41,7 +41,7 @@ from iris.tests import mock
 import iris.tests.stock as stock
 
 
-class TestHybridPressure(tests.IrisTest):
+class TestHybrdPressure(tests.IrisTest):
     def setUp(self):
         # Modify stock cube so it is suitable to have a
         # hybrid pressure factory added to it.
@@ -58,6 +58,7 @@ class TestHybridPressure(tests.IrisTest):
         cube.add_aux_factory(factory)
         self.cube = cube
 
+    @tests.skip_vdep
     def test_save(self):
         with self.temp_filename(suffix='.nc') as filename:
             iris.save(self.cube, filename)
@@ -77,6 +78,7 @@ class TestHybridPressure(tests.IrisTest):
 
 
 class TestSaveMultipleAuxFactories(tests.IrisTest):
+    @tests.skip_vdep
     def test_hybrid_height_and_pressure(self):
         cube = stock.realistic_4d()
         cube.add_aux_coord(iris.coords.DimCoord(
@@ -131,6 +133,7 @@ class TestSaveMultipleAuxFactories(tests.IrisTest):
 
 
 class TestUmVersionAttribute(tests.IrisTest):
+    @tests.skip_vdep
     def test_single_saves_as_global(self):
         cube = Cube([1.0], standard_name='air_temperature', units='K',
                     attributes={'um_version': '4.3'})
@@ -138,6 +141,7 @@ class TestUmVersionAttribute(tests.IrisTest):
             iris.save(cube, nc_path)
             self.assertCDL(nc_path)
 
+    @tests.skip_vdep
     def test_multiple_same_saves_as_global(self):
         cube_a = Cube([1.0], standard_name='air_temperature', units='K',
                       attributes={'um_version': '4.3'})
@@ -147,6 +151,7 @@ class TestUmVersionAttribute(tests.IrisTest):
             iris.save(CubeList([cube_a, cube_b]), nc_path)
             self.assertCDL(nc_path)
 
+    @tests.skip_vdep
     def test_multiple_different_saves_on_variables(self):
         cube_a = Cube([1.0], standard_name='air_temperature', units='K',
                       attributes={'um_version': '4.3'})
@@ -205,6 +210,7 @@ class TestLazySave(tests.IrisTest):
                 saver.write(acube)
         self.assertTrue(acube.has_lazy_data())
 
+    @tests.skip_vdep
     def test_lazy_mask_preserve_fill_value(self):
         cube = iris.cube.Cube(np.ma.array([0, 1], mask=[False, True],
                                           fill_value=-1))
