@@ -162,7 +162,7 @@ class Test__regrid__linear(tests.IrisTest):
 
 # Check what happens to NaN values, extrapolated values, and
 # masked values.
-@skip_vdep
+@tests.skip_vdep
 class Test__regrid__extrapolation_modes(tests.IrisTest):
     values_by_method = {'linear': [[np.nan, np.nan, 2, 3, np.nan],
                                    [np.nan, np.nan, 6, 7, np.nan],
