@@ -45,6 +45,7 @@ class Test(tests.IrisTest):
                     datetime.datetime(2000, 4, 13, 6)]
         self.assertArrayEqual(result, expected)
 
+    @tests.skip_vdep
     def test_gregorian_calendar_sub_second(self):
         unit = Unit('seconds since 2000-04-13 00:00:00', calendar='gregorian')
         coord = AuxCoord([1, 1.25, 1.5], 'time', units=unit)
@@ -64,6 +65,7 @@ class Test(tests.IrisTest):
         self.assertArrayEqual([cdt.datetime for cdt in result],
                               expected_datetimes)
 
+    @tests.skip_vdep
     def test_365_day_calendar(self):
         unit = Unit('minutes since 2000-02-25 00:00:00', calendar='365_day')
         coord = AuxCoord([30, 60, 150], 'time', units=unit)
