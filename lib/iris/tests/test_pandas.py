@@ -119,18 +119,21 @@ class TestAsSeries(tests.IrisTest):
         series[0] = 99
         self.assertEqual(cube.data[0], 0)
 
+    @tests.skip_vdep
     def test_copy_int32_false(self):
         cube = Cube(np.array([0, 1, 2, 3, 4], dtype=np.int32), long_name="foo")
         series = iris.pandas.as_series(cube, copy=False)
         series[0] = 99
         self.assertEqual(cube.data[0], 99)
 
+    @tests.skip_vdep
     def test_copy_int64_false(self):
         cube = Cube(np.array([0, 1, 2, 3, 4], dtype=np.int32), long_name="foo")
         series = iris.pandas.as_series(cube, copy=False)
         series[0] = 99
         self.assertEqual(cube.data[0], 99)
 
+    @tests.skip_vdep
     def test_copy_float_false(self):
         cube = Cube(np.array([0, 1, 2, 3.3, 4]), long_name="foo")
         series = iris.pandas.as_series(cube, copy=False)
@@ -203,6 +206,7 @@ class TestAsDataFrame(tests.IrisTest):
             tests.get_result_path(('pandas', 'as_dataframe',
                                    'simple.txt')))
 
+    @tests.skip_vdep
     def test_masked(self):
         data = np.ma.MaskedArray([[0, 1, 2, 3, 4.4], [5, 6, 7, 8, 9]],
                                  mask=[[0, 1, 0, 1, 0], [1, 0, 1, 0, 1]])
@@ -233,6 +237,7 @@ class TestAsDataFrame(tests.IrisTest):
         self.assertTrue(all(data_frame.columns == timestamps))
         self.assertTrue(all(data_frame.index == [0, 1]))
 
+    @tests.skip_vdep
     def test_time_360(self):
         cube = Cube(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]),
                     long_name="ts")
