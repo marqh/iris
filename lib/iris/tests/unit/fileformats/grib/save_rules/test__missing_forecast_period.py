@@ -33,6 +33,7 @@ from iris.cube import Cube
 from iris.coords import DimCoord
 from iris.fileformats.grib._save_rules import _missing_forecast_period
 
+
 @tests.skip_vdep
 class TestNoForecastReferenceTime(tests.IrisTest):
     def test_no_bounds(self):
@@ -67,6 +68,7 @@ class TestNoForecastReferenceTime(tests.IrisTest):
                     expected_fp,
                     expected_fp_type)
         self.assertEqual(res, expected)
+
 
 @tests.skip_vdep
 class TestWithForecastReferenceTime(tests.IrisTest):
