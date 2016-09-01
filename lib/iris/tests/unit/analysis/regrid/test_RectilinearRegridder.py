@@ -1205,6 +1205,7 @@ class Test___call____NOP(tests.IrisTest):
 
 
 @tests.skip_data
+@tests.skip_vdep
 class Test___call____circular(tests.IrisTest):
     def setUp(self):
         src = global_pp()[::10, ::10]
