@@ -38,8 +38,9 @@ install:
 
   # Create the basic testing environment
   # ------------------------------------
+  - conda config --add channels conda-forge
   # Explicitly add defaults channel, see https://github.com/conda/conda/issues/2675
-  - conda config --add channels defaults
+  # - conda config --add channels defaults
   - conda config --set always_yes yes --set changeps1 no
   - conda config --set show_channel_urls True
   - conda update --quiet conda
@@ -49,7 +50,7 @@ install:
 
   # Customise the testing environment
   # ---------------------------------
-  - conda config --add channels scitools
+  # - conda config --add channels scitools
   - if [[ "$TEST_MINIMAL" == true ]]; then
       conda install --quiet --file minimal-conda-requirements.txt;
     else
