@@ -701,6 +701,12 @@ class IrisTest(unittest.TestCase):
 
             err = mcompare.compare_images(expected_fname, result_fname, tol=tol)
 
+            # hash the created image using sha1
+            import hashlib
+            with open(result_fname, 'rb') as res_file:
+                sha1 = hashlib.sha1(res_file.read())
+                err = '{}\n\tSHA1: {}'.format(err, sha1.hexdigest())
+
             if _DISPLAY_FIGURES:
                 if err:
                     print('Image comparison would have failed. Message: %s' % err)
