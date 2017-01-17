@@ -37,6 +37,7 @@ import re
 import string
 import warnings
 
+import dask.array
 import biggus
 import netCDF4
 import numpy as np
@@ -504,7 +505,8 @@ def _load_cube(engine, cf, cf_var, filename):
                          netCDF4.default_fillvals[cf_var.dtype.str[1:]])
     proxy = NetCDFDataProxy(cf_var.shape, dummy_data.dtype,
                             filename, cf_var.cf_name, fill_value)
-    data = biggus.OrthoArrayAdapter(proxy)
+    # data = biggus.OrthoArrayAdapter(proxy)
+    data = dask.array.from_array(proxy, chunks=1000)
     cube = iris.cube.Cube(data)
 
     # Reset the pyke inference engine.

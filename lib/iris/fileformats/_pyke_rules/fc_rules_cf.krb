@@ -1004,6 +1004,7 @@ fc_extras
 
     import biggus
     import cf_units
+    import dask
     import netCDF4
     import numpy as np
     import numpy.ma as ma
@@ -1630,7 +1631,8 @@ fc_extras
             proxy = iris.fileformats.netcdf.NetCDFDataProxy(
                 cf_var.shape, dtype, engine.filename,
                 cf_var.cf_name, fill_value)
-            return biggus.OrthoArrayAdapter(proxy)
+            #return biggus.OrthoArrayAdapter(proxy)
+	    return dask.array.from_array(proxy, chunks=1000)
 
         # Get any coordinate point data.
         if isinstance(cf_coord_var, cf.CFLabelVariable):
@@ -1702,7 +1704,8 @@ fc_extras
             proxy = iris.fileformats.netcdf.NetCDFDataProxy(
                 cf_var.shape, dtype, engine.filename,
                 cf_var.cf_name, fill_value)
-            return biggus.OrthoArrayAdapter(proxy)
+            # return biggus.OrthoArrayAdapter(proxy)
+	    return dask.array.from_array(proxy, chunks=1000)
 
         data = cf_var_as_biggus(cf_cm_attr)
 
