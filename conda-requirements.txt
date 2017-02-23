@@ -4,9 +4,9 @@
 # Mandatory dependencies
 biggus
 cartopy
-matplotlib<2
-netcdf4==1.2.2
-numpy<1.12
+matplotlib
+netcdf4
+numpy
 pyke
 udunits2
 cf_units
