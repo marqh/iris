@@ -92,7 +92,7 @@ else:
     GDAL_AVAILABLE = True
 
 try:
-    import iris_grib
+    import iris.fileformats.grib as iris_grib
     GRIB_AVAILABLE = True
     from iris_grib.message import GribMessage
 except ImportError:

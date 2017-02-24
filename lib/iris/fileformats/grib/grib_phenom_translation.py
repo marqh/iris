@@ -1,19 +1,19 @@
-# (C) British Crown Copyright 2013 - 2015, Met Office
+# (C) British Crown Copyright 2013 - 2016, Met Office
 #
-# This file is part of Iris.
+# This file is part of iris-grib.
 #
-# Iris is free software: you can redistribute it and/or modify it under
+# iris-grib is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the
 # Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Iris is distributed in the hope that it will be useful,
+# iris-grib is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with Iris.  If not, see <http://www.gnu.org/licenses/>.
+# along with iris-grib.  If not, see <http://www.gnu.org/licenses/>.
 '''
 Provide grib 1 and 2 phenomenon translations to + from CF terms.
 
@@ -37,11 +37,11 @@ import warnings
 
 import cf_units
 
-from iris.fileformats.grib import _grib_cf_map as grcf
+from . import _grib_cf_map as grcf
 import iris.std_names
 
 
-class LookupTable(dict):
+class _LookupTable(dict):
     """
     Specialised dictionary object for making lookup tables.
 
@@ -51,7 +51,7 @@ class LookupTable(dict):
 
     """
     def __init__(self, *args, **kwargs):
-        self._super = super(LookupTable, self)
+        self._super = super(_LookupTable, self)
         self._super.__init__(*args, **kwargs)
 
     def __getitem__(self, key):
@@ -83,7 +83,7 @@ _GribToCfDataClass = collections.namedtuple(
 
 def _make_grib1_cf_table():
     """ Build the Grib1 to CF phenomenon translation table. """
-    table = LookupTable()
+    table = _LookupTable()
 
     def _make_grib1_cf_entry(table2_version, centre_number, param_number,
                              standard_name, long_name, units, set_height=None):
@@ -170,7 +170,7 @@ _Grib2ToCfKeyClass = collections.namedtuple(
 
 def _make_grib2_to_cf_table():
     """ Build the Grib2 to CF phenomenon translation table. """
-    table = LookupTable()
+    table = _LookupTable()
 
     def _make_grib2_cf_entry(param_discipline, param_category, param_number,
                              standard_name, long_name, units):
@@ -233,7 +233,7 @@ _CfToGrib2DataClass = collections.namedtuple(
 
 def _make_cf_to_grib2_table():
     """ Build the Grib1 to CF phenomenon translation table. """
-    table = LookupTable()
+    table = _LookupTable()
 
     def _make_cf_grib2_entry(standard_name, long_name,
                              param_discipline, param_category, param_number,

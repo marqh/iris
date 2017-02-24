@@ -246,7 +246,7 @@ def _grib_save(cube, target, append=False, **kwargs):
     # A simple wrapper for the grib save routine, which allows the saver to be
     # registered without having the grib implementation installed.
     try:
-        import iris_grib as igrib
+        import iris.fileformats.grib as igrib
     except ImportError:
         try:
             import gribapi
