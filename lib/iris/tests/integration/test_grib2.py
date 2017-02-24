@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2014 - 2016, Met Office
+# (C) British Crown Copyright 2014 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -40,8 +40,8 @@ from iris.util import is_regular
 if tests.GRIB_AVAILABLE:
     try:
         # Try to load the independent 'iris_grib' package.
-        from iris_grib import load_pairs_from_fields
-        from iris_grib.message import GribMessage
+        from iris.fileformats.grib import load_pairs_from_fields
+        from iris.fileformats.grib.message import GribMessage
     except ImportError:
         # Try to load old inbuilt module instead.
         from iris.fileformats.grib import load_pairs_from_fields

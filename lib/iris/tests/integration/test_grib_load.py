@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2010 - 2016, Met Office
+# (C) British Crown Copyright 2010 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -44,7 +44,7 @@ from unittest import skipIf
 
 if tests.GRIB_AVAILABLE:
     try:
-        import iris_grib
+        import iris.fileformats.grib as iris_grib
         iris_internal_grib_module = None
     except ImportError:
         from iris.fileformats import grib as iris_internal_grib_module

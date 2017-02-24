@@ -29,8 +29,8 @@ import numpy as np
 
 import iris
 
-import iris_grib
-from iris_grib.message import GribMessage
+import iris.fileformats.grib as iris_grib
+from iris.fileformats.grib.message import GribMessage
 
 
 def _make_test_message(sections):

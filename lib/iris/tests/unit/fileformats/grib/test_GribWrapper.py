@@ -24,7 +24,7 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 
 # Import iris_grib.tests first so that some things can be initialised before
 # importing anything else.
-import iris_grib.tests as tests
+import iris.tests as tests
 
 from biggus import NumpyArrayAdapter
 import mock
@@ -32,7 +32,7 @@ import numpy as np
 
 from iris.exceptions import TranslationError
 
-from iris_grib import GribWrapper, GribDataProxy
+from iris.fileformats.grib import GribWrapper, GribDataProxy
 
 
 _message_length = 1000
