@@ -78,6 +78,7 @@ class Test___common_cmp__(tests.IrisTest):
         self.assert_raises_on_comparison(cell, dt, TypeError,
                                          'bounded region for datetime')
 
+    @tests.skip_biggus
     def test_PartialDateTime_unbounded_cell(self):
         # Check that cell comparison works with PartialDateTimes.
         dt = PartialDateTime(month=6)
