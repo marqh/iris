@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2013 - 2015, Met Office
+# (C) British Crown Copyright 2013 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -66,6 +66,7 @@ class Test___common_cmp__(tests.IrisTest):
         self.assert_raises_on_comparison(cell, dt, TypeError,
                                          'determine the order of netcdftime')
 
+    @tests.skip_biggus
     def test_PartialDateTime_bounded_cell(self):
         # Check that bounded comparisions to a PartialDateTime
         # raise an exception. These are not supported as they

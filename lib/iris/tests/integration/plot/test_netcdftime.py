@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2016, Met Office
+# (C) British Crown Copyright 2016 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -42,6 +42,7 @@ if tests.MPL_AVAILABLE:
 @tests.skip_nc_time_axis
 @tests.skip_plot
 class Test(tests.GraphicsTest):
+    @tests.skip_biggus
     def test_360_day_calendar(self):
         n = 360
         calendar = '360_day'

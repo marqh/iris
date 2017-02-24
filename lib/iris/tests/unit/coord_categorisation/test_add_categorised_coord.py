@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2013 - 2016, Met Office
+# (C) British Crown Copyright 2013 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -114,6 +114,7 @@ class Test_add_day_of_year(tests.IrisTest):
         cube.add_dim_coord(time_coord, 0)
         return cube
 
+    @tests.skip_biggus
     def test_calendars(self):
         for calendar in calendars:
             cube = self.make_cube(calendar)

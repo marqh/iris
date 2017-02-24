@@ -94,6 +94,7 @@ class TestAsSeries(tests.IrisTest):
         self.assertArrayEqual(series, cube.data)
         self.assertListEqual(list(series.index), expected_index)
 
+    @tests.skip_biggus
     def test_time_360(self):
         cube = Cube(np.array([0, 1, 2, 3, 4]), long_name="ts")
         time_unit = cf_units.Unit("days since 2000-01-01 00:00",
@@ -231,6 +232,7 @@ class TestAsDataFrame(tests.IrisTest):
         self.assertTrue(all(data_frame.columns == timestamps))
         self.assertTrue(all(data_frame.index == [0, 1]))
 
+    @tests.skip_biggus
     def test_time_360(self):
         cube = Cube(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]),
                     long_name="ts")

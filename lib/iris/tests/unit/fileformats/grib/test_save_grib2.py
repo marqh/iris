@@ -22,7 +22,7 @@ import six
 
 # Import iris_grib.tests first so that some things can be initialised before
 # importing anything else.
-import iris_grib.tests as tests
+import iris.tests as tests
 
 import mock
 

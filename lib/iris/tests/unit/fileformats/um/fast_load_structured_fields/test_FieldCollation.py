@@ -106,6 +106,7 @@ class Test_element_arrays_and_dims(tests.IrisTest):
         collation = FieldCollation([field])
         self.assertEqual(collation.element_arrays_and_dims, {})
 
+    @tests.skip_biggus
     def test_t1(self):
         collation = FieldCollation([_make_field(lbyr=2013),
                                     _make_field(lbyr=2014)])
@@ -116,6 +117,7 @@ class Test_element_arrays_and_dims(tests.IrisTest):
                                        datetime(2014, 1, 1)])
         self.assertEqual(dims, (0,))
 
+    @tests.skip_biggus
     def test_t1_and_t2(self):
         collation = FieldCollation([_make_field(lbyr=2013, lbyrd=2000),
                                     _make_field(lbyr=2014, lbyrd=2001),
@@ -133,6 +135,7 @@ class Test_element_arrays_and_dims(tests.IrisTest):
                                        datetime(2002, 1, 1)])
         self.assertEqual(dims, (0,))
 
+    @tests.skip_biggus
     def test_t1_and_t2_and_lbft(self):
         collation = FieldCollation([_make_field(lbyr=1, lbyrd=15, lbft=6),
                                     _make_field(lbyr=1, lbyrd=16, lbft=9),
