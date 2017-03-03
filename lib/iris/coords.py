@@ -492,7 +492,13 @@ class Coord(six.with_metaclass(ABCMeta, CFVariableMixin)):
                         raise IndexError('Cannot index with zero length '
                                          'slice.')
                 if bounds is not None:
-                    bounds = bounds[keys + (Ellipsis, )]
+                    # Bounds will generally have an extra dimension compared
+                    # to points, so add an Ellipsis at the end, unless there
+                    # is already on, as numpy does not support double Ellipsis.
+                    if keys[-1] == Ellipsis:
+                        bounds = bounds[keys]
+                    else:
+                        bounds = bounds[keys + (Ellipsis, )]
 
         new_coord = self.copy(points=points, bounds=bounds)
         return new_coord
