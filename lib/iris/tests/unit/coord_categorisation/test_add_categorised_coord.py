@@ -99,7 +99,6 @@ class Test_add_day_of_year(tests.IrisTest):
             'proleptic_gregorian': np.array(list(range(360, 367)) +
                                             list(range(1, 4))),
             'noleap': np.array(list(range(359, 366)) + list(range(1, 4))),
-            'julian': np.array(list(range(360, 367)) + list(range(1, 4))),
             'all_leap': np.array(list(range(360, 367)) + list(range(1, 4))),
             '365_day': np.array(list(range(359, 366)) + list(range(1, 4))),
             '366_day': np.array(list(range(360, 367)) + list(range(1, 4))),
@@ -115,7 +114,7 @@ class Test_add_day_of_year(tests.IrisTest):
         return cube
 
     def test_calendars(self):
-        for calendar in calendars:
+        for calendar in self.expected:
             cube = self.make_cube(calendar)
             add_day_of_year(cube, 'time')
             points = cube.coord('day_of_year').points
