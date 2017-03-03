@@ -728,7 +728,8 @@
     "iris.tests.test_quickplot.TestTimeReferenceUnitsLabels.test_not_reference_time_units.0": [
         "https://scitools.github.io/test-iris-imagehash/images/415f85e9fefb91e94600bb6f07009be7effa1966ab065b273b009b663b007a04.png", 
         "https://scitools.github.io/test-iris-imagehash/images/411d85e9fefb91e14600bb6707009be7effe1966ab06fb273b009b663f007a04.png", 
-        "https://scitools.github.io/test-iris-imagehash/images/411f85e9fefb91e14600bb6f07009be7effe1966ab067b273b009b663b007a04.png"
+        "https://scitools.github.io/test-iris-imagehash/images/411f85e9fefb91e14600bb6f07009be7effe1966ab067b273b009b663b007a04.png",
+	"https://scitools.github.io/test-iris-imagehash/images/411f85e9fefb91e14600bb6707009be7effe1966ab06fb273b00bb263b007a04.png"
     ], 
     "iris.tests.test_quickplot.TestTimeReferenceUnitsLabels.test_reference_time_units.0": [
         "https://scitools.github.io/test-iris-imagehash/images/417f8119feebeeff070054bb2b0014a0bb157ba6bb972b46dabf3b0419827b04.png", 
