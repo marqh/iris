@@ -69,6 +69,7 @@ class Test_sections(tests.IrisTest):
         self.assertIs(message.sections, mock.sentinel.SECTIONS)
 
 
+@tests.skip_biggus
 class Test_data__masked(tests.IrisTest):
     def setUp(self):
         self.bitmap = np.array([0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1])
@@ -212,6 +213,7 @@ def _example_section_3(grib_definition_template_number, scanning_mode):
             'Ni': 4}
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_0(tests.IrisTest_nometa,
                                  Mixin_data__grid_template):
