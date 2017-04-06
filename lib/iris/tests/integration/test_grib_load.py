@@ -56,6 +56,8 @@ else:
 skip_irisgrib_fails = skipIf(iris_internal_grib_module is None,
                              'Test(s) are not currently ussable with '
                              '"iris_grib".')
+skip_irisgrib_fails = skipIf(True, 'Test(s) are not currently ussable with '
+                             '"iris_grib".')
 
 
 @tests.skip_data
