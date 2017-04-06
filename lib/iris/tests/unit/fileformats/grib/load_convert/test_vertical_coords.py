@@ -33,9 +33,10 @@ from iris.exceptions import TranslationError
 from iris.fileformats.grib._load_convert import vertical_coords
 from iris.fileformats.grib._load_convert import \
     _TYPE_OF_FIXED_SURFACE_MISSING as MISSING_SURFACE, \
-    _MDI as MISSING_LEVEL
+    _MDIs
 from iris.tests import mock
 
+MISSING_LEVEL = [mdi for mdi in _MDIs][1]
 
 class Test(tests.IrisTest):
     def setUp(self):

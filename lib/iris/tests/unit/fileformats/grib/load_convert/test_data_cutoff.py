@@ -26,9 +26,11 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 # before importing anything else.
 import iris.tests as tests
 
-from iris.fileformats.grib._load_convert import _MDI as MDI
+from iris.fileformats.grib._load_convert import _MDIs
 from iris.fileformats.grib._load_convert import data_cutoff
 from iris.tests import mock
+
+MDI = [mdi for mdi in _MDIs][1]
 
 
 class TestDataCutoff(tests.IrisTest):

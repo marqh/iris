@@ -29,8 +29,10 @@ import iris.tests as tests
 
 from iris.exceptions import TranslationError
 from iris.fileformats.grib._load_convert import product_definition_template_9
-from iris.fileformats.grib._load_convert import Probability, _MDI
+from iris.fileformats.grib._load_convert import Probability, _MDIs
 from iris.tests import mock
+
+MDI = [mdi for mdi in _MDIs][1]
 
 
 class Test(tests.IrisTest):
@@ -69,14 +71,14 @@ class Test(tests.IrisTest):
                 self.section, self.metadata, self.frt_coord)
 
     def test_fail_bad_threshold_value(self):
-        self.section['scaledValueOfUpperLimit'] = _MDI
+        self.section['scaledValueOfUpperLimit'] = MDI
         with self.assertRaisesRegexp(TranslationError,
                                      'missing scaled value'):
             product_definition_template_9(
                 self.section, self.metadata, self.frt_coord)
 
     def test_fail_bad_threshold_scalefactor(self):
-        self.section['scaleFactorOfUpperLimit'] = _MDI
+        self.section['scaleFactorOfUpperLimit'] = MDI
         with self.assertRaisesRegexp(TranslationError,
                                      'missing scale factor'):
             product_definition_template_9(

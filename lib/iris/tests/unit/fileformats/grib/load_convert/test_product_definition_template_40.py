@@ -29,14 +29,16 @@ import iris.tests as tests
 
 import iris.coords
 from iris.fileformats.grib._load_convert import \
-     product_definition_template_40, _MDI
+     product_definition_template_40, _MDIs
 from iris.tests.unit.fileformats.grib.load_convert import empty_metadata
+
+MDI = [mdi for mdi in _MDIs][1]
 
 
 class Test(tests.IrisTest):
     def setUp(self):
-        self.section_4 = {'hoursAfterDataCutoff': _MDI,
-                          'minutesAfterDataCutoff': _MDI,
+        self.section_4 = {'hoursAfterDataCutoff': MDI,
+                          'minutesAfterDataCutoff': MDI,
                           'constituentType': 1,
                           'indicatorOfUnitOfTimeRange': 0,  # minutes
                           'startStep': 360,

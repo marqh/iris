@@ -29,10 +29,11 @@ import iris.tests as tests
 import numpy as np
 import numpy.ma as ma
 
-from iris.fileformats.grib._load_convert import unscale, _MDI as MDI
+from iris.fileformats.grib._load_convert import unscale, _MDIs
 
 # Reference GRIB2 Regulation 92.1.12.
 
+MDI = [mdi for mdi in _MDIs][1]
 
 class Test(tests.IrisTest):
     def test_single(self):
