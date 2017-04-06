@@ -1122,7 +1122,7 @@ def skip_plot(fn):
 
 
 # Control for @skip_biggus : Set to False to run the biggus-dependent tests.
-_SKIP_BIGGUS_DEPENDENT_TESTS = True
+_SKIP_BIGGUS_DEPENDENT_TESTS = False
 
 skip_biggus = unittest.skipIf(_SKIP_BIGGUS_DEPENDENT_TESTS,
                               reason='Test(s) assume biggus in place of dask.')
