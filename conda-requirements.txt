@@ -26,7 +26,7 @@ requests
 
 # Optional iris dependencies
 nc_time_axis
-iris-grib
+python-eccodes
 esmpy>=7.0
 gdal
 libmo_unpack
