@@ -219,6 +219,7 @@ class Test_data__grid_template_0(tests.IrisTest_nometa,
         return _example_section_3(0, scanning_mode)
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_1(tests.IrisTest_nometa,
                                  Mixin_data__grid_template):
@@ -226,6 +227,7 @@ class Test_data__grid_template_1(tests.IrisTest_nometa,
         return _example_section_3(1, scanning_mode)
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_5(tests.IrisTest_nometa,
                                  Mixin_data__grid_template):
@@ -233,6 +235,7 @@ class Test_data__grid_template_5(tests.IrisTest_nometa,
         return _example_section_3(5, scanning_mode)
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_12(tests.IrisTest_nometa,
                                   Mixin_data__grid_template):
@@ -240,6 +243,7 @@ class Test_data__grid_template_12(tests.IrisTest_nometa,
         return _example_section_3(12, scanning_mode)
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_30(tests.IrisTest_nometa,
                                   Mixin_data__grid_template):
@@ -253,6 +257,7 @@ class Test_data__grid_template_30(tests.IrisTest_nometa,
         return section_3
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_40_regular(tests.IrisTest_nometa,
                                           Mixin_data__grid_template):
@@ -260,6 +265,7 @@ class Test_data__grid_template_40_regular(tests.IrisTest_nometa,
         return _example_section_3(40, scanning_mode)
 
 
+@tests.skip_biggus
 @tests.iristest_timing_decorator
 class Test_data__grid_template_90(tests.IrisTest_nometa,
                                   Mixin_data__grid_template):
