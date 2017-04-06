@@ -29,7 +29,6 @@ import datetime
 import math  # for fmod
 import warnings
 
-import biggus
 import cartopy.crs as ccrs
 import cf_units
 import gribapi
@@ -37,6 +36,7 @@ import numpy as np
 import numpy.ma as ma
 
 import iris
+from iris._lazy_data import as_lazy_data
 import iris.coord_systems as coord_systems
 from iris.exceptions import TranslationError, NotYetImplementedError, IrisError
 from iris.fileformats.grib import grib_phenom_translation as gptx
@@ -183,7 +183,7 @@ class GribWrapper(object):
             proxy = GribDataProxy(shape, np.zeros(.0).dtype, np.nan,
                                   grib_fh.name,
                                   offset - message_length)
-            self._data = biggus.NumpyArrayAdapter(proxy)
+            self._data = as_lazy_data(proxy)
         else:
             self.data = _message_values(grib_message, shape)
 

@@ -26,10 +26,10 @@ import six
 from collections import namedtuple
 import re
 
-import biggus
 import gribapi
 import numpy as np
 
+from iris._lazy_data import as_lazy_data
 from iris.exceptions import TranslationError
 
 
@@ -114,6 +114,10 @@ class GribMessage(object):
         return self._raw_message.sections
 
     @property
+    def bmdi(self):
+        return np.nan
+
+    @property
     def data(self):
         """
         The data array from the GRIB message as a biggus Array.
@@ -150,13 +154,17 @@ class GribMessage(object):
                 shape = (grid_section['numberOfDataPoints'],)
             else:
                 shape = (grid_section['Nj'], grid_section['Ni'])
-            proxy = _DataProxy(shape, np.dtype('f8'), np.nan,
+            proxy = _DataProxy(shape, np.dtype('f8'), self.bmdi,
                                self._recreate_raw)
-            data = biggus.NumpyArrayAdapter(proxy)
+            data = as_lazy_data(proxy)
         else:
             fmt = 'Grid definition template {} is not supported'
             raise TranslationError(fmt.format(template))
         return data
+
+    @property
+    def core_data(self):
+        return self.data
 
     def __getstate__(self):
         """

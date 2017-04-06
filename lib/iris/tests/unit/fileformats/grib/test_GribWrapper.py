@@ -26,9 +26,9 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 # importing anything else.
 import iris.tests as tests
 
-from biggus import NumpyArrayAdapter
 import numpy as np
 
+from iris._lazy_data import is_lazy_data
 from iris.exceptions import TranslationError
 from iris.fileformats.grib import GribWrapper, GribDataProxy
 from iris.tests import mock
@@ -116,7 +116,7 @@ class Test_deferred(tests.IrisTest):
         grib_message = 'regular_ll'
         for i, _ in enumerate(tell_tale):
             gw = GribWrapper(grib_message, grib_fh)
-            self.assertIsInstance(gw._data, NumpyArrayAdapter)
+            self.assertTrue(is_lazy_data(gw._data))
             proxy = gw._data.concrete
             self.assertIsInstance(proxy, GribDataProxy)
             self.assertEqual(proxy.shape, (10, 20))
@@ -132,7 +132,7 @@ class Test_deferred(tests.IrisTest):
         grib_message = 'regular_ll'
         for offset in expected:
             gw = GribWrapper(grib_message, grib_fh)
-            self.assertIsInstance(gw._data, NumpyArrayAdapter)
+            self.assertTrue(is_lazy_data(gw._data))
             proxy = gw._data.concrete
             self.assertIsInstance(proxy, GribDataProxy)
             self.assertEqual(proxy.shape, (10, 20))
@@ -147,7 +147,7 @@ class Test_deferred(tests.IrisTest):
         grib_message = 'reduced_gg'
         for i, _ in enumerate(tell_tale):
             gw = GribWrapper(grib_message, grib_fh)
-            self.assertIsInstance(gw._data, NumpyArrayAdapter)
+            self.assertTrue(is_lazy_data(gw._data))
             proxy = gw._data.concrete
             self.assertIsInstance(proxy, GribDataProxy)
             self.assertEqual(proxy.shape, (200,))
@@ -163,7 +163,7 @@ class Test_deferred(tests.IrisTest):
         grib_message = 'reduced_gg'
         for offset in expected:
             gw = GribWrapper(grib_message, grib_fh)
-            self.assertIsInstance(gw._data, NumpyArrayAdapter)
+            self.assertTrue(is_lazy_data(gw._data))
             proxy = gw._data.concrete
             self.assertIsInstance(proxy, GribDataProxy)
             self.assertEqual(proxy.shape, (200,))
