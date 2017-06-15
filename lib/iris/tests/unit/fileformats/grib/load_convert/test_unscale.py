@@ -29,9 +29,10 @@ import iris.tests as tests
 import numpy as np
 import numpy.ma as ma
 
-from iris.fileformats.grib._load_convert import _MDI as MDI, unscale
+from iris.fileformats.grib._load_convert import _MDIs, unscale
 
 # Reference GRIB2 Regulation 92.1.12.
+MDI = _MDIs[1]
 
 
 class Test(tests.IrisTest):
