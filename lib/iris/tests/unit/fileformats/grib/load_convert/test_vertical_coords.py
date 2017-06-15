@@ -31,10 +31,12 @@ from copy import deepcopy
 from iris.coords import DimCoord
 from iris.exceptions import TranslationError
 from iris.fileformats.grib._load_convert import \
-    _MDI as MISSING_LEVEL, \
+    _MDIs, \
     _TYPE_OF_FIXED_SURFACE_MISSING as MISSING_SURFACE, \
     vertical_coords
 from iris.tests import mock
+
+MISSING_LEVEL = _MDIs[1]
 
 
 class Test(tests.IrisTest):

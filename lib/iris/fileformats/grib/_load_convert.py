@@ -158,7 +158,9 @@ def unscale(value, factor):
 
     if isinstance(value, Iterable) or isinstance(factor, Iterable):
         def _masker(item):
-            result = ma.masked_equal(item, _MDI)
+            result = item
+            for _MDI in _MDIs:
+                result = ma.masked_equal(result, _MDI)
             if ma.count_masked(result):
                 # Circumvent downstream NumPy "RuntimeWarning"
                 # of "overflow encountered in power" in _unscale
@@ -172,24 +174,24 @@ def unscale(value, factor):
             result = result.data
     else:
         result = ma.masked
-        if value != _MDI and factor != _MDI:
+        if value not in _MDIs and factor not in _MDIs:
             result = _unscale(value, factor)
     return result
 
 
 # Regulations 92.1.4 and 92.1.5.
-_MDI = 2 ** 32 - 1
+_MDIs = [2 ** 31 - 1, 2 ** 32 - 1]
 # Note:
 #   1. Integer "on-disk" values (aka. coded keys) in GRIB messages:
 #       - Are 8-, 16-, or 32-bit.
 #       - Are either signed or unsigned, with signed values stored as
 #         sign-and-magnitude (*not* twos-complement).
 #       - Use all bits set to indicate a missing value (MDI).
-#   2. Irrespective of the on-disk form, the ECMWF GRIB API *always*:
+#   2. Irrespective of the on-disk form, ECCodes: the ECMWF GRIB API *always*:
 #       - Returns values as 64-bit signed integers, either as native
 #         Python 'int' or numpy 'int64'.
-#       - Returns missing values as 2**32 - 1, but not all keys are
-#         defined as supporting missing values.
+#       - Returns missing values as 2**32 - 1 or 2**31 - 1, but not all keys
+#         are defined as supporting missing values.
 #   NB. For keys which support missing values, the MDI value is reliably
 #   distinct from the valid range of either signed or unsigned 8-, 16-,
 #   or 32-bit values. For example:
@@ -634,10 +636,10 @@ def grid_definition_template_4_and_5(section, metadata, y_name, x_name, cs):
     basicAngleOfTheInitialProductDomain = section[key]
     subdivisionsOfBasicAngle = section['subdivisionsOfBasicAngle']
 
-    if basicAngleOfTheInitialProductDomain in [0, _MDI]:
+    if basicAngleOfTheInitialProductDomain in [0] + _MDIs:
         basicAngleOfTheInitialProductDomain = 1.
 
-    if subdivisionsOfBasicAngle in [0, _MDI]:
+    if subdivisionsOfBasicAngle in [0] + _MDIs:
         subdivisionsOfBasicAngle = 1. / _GRID_ACCURACY_IN_DEGREES
 
     resolution = np.float64(basicAngleOfTheInitialProductDomain)
@@ -1078,7 +1080,7 @@ def grid_definition_template_90(section, metadata):
         :class:`collections.OrderedDict` of metadata.
 
     """
-    if section['Nr'] == _MDI:
+    if section['Nr'] in _MDIs:
         raise TranslationError('Unsupported orthographic grid.')
     elif section['Nr'] == 0:
         raise TranslationError('Unsupported zero height for space-view.')
@@ -1403,7 +1405,7 @@ def vertical_coords(section, metadata):
 
         if fixed_surface is None:
             if typeOfFirstFixedSurface != _TYPE_OF_FIXED_SURFACE_MISSING:
-                if scaledValueOfFirstFixedSurface == _MDI:
+                if scaledValueOfFirstFixedSurface in _MDIs:
                     if options.warn_on_unsupported:
                         msg = 'Unable to translate type of first fixed ' \
                             'surface with missing scaled value.'
@@ -1427,7 +1429,7 @@ def vertical_coords(section, metadata):
                 key = 'scaledValueOfSecondFixedSurface'
                 scaledValueOfSecondFixedSurface = section[key]
 
-                if scaledValueOfSecondFixedSurface == _MDI:
+                if scaledValueOfSecondFixedSurface in _MDIs:
                     msg = 'Product definition section 4 has missing ' \
                         'scaled value of second fixed surface'
                     raise TranslationError(msg)
@@ -1686,8 +1688,8 @@ def data_cutoff(hoursAfterDataCutoff, minutesAfterDataCutoff):
         Message section 4, octet 17.
 
     """
-    if (hoursAfterDataCutoff != _MDI or
-            minutesAfterDataCutoff != _MDI):
+    if (hoursAfterDataCutoff not in _MDIs or
+            minutesAfterDataCutoff not in _MDIs):
         if options.warn_on_unsupported:
             warnings.warn('Unable to translate "hours and/or minutes '
                           'after data cutoff".')
@@ -1937,12 +1939,12 @@ def product_definition_template_9(section, metadata, frt_coord):
     if probability_typecode == 1:
         # Type is "above upper level".
         threshold_value = section['scaledValueOfUpperLimit']
-        if threshold_value == _MDI:
+        if threshold_value in _MDIs:
             msg = 'Product definition section 4 has missing ' \
                 'scaled value of upper limit'
             raise TranslationError(msg)
         threshold_scaling = section['scaleFactorOfUpperLimit']
-        if threshold_scaling == _MDI:
+        if threshold_scaling in _MDIs:
             msg = 'Product definition section 4 has missing ' \
                 'scale factor of upper limit'
             raise TranslationError(msg)

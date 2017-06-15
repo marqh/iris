@@ -1,4 +1,4 @@
-# (C) British Crown Copyright 2014 - 2015, Met Office
+# (C) British Crown Copyright 2014 - 2017, Met Office
 #
 # This file is part of Iris.
 #
@@ -29,8 +29,10 @@ import iris.tests as tests
 
 from iris.exceptions import TranslationError
 from iris.fileformats.grib._load_convert import product_definition_template_9
-from iris.fileformats.grib._load_convert import Probability, _MDI
+from iris.fileformats.grib._load_convert import Probability, _MDIs
 from iris.tests import mock
+
+_MDI = _MDIs[1]
 
 
 class Test(tests.IrisTest):

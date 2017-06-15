@@ -34,11 +34,11 @@ import numpy as np
 
 from iris.coords import DimCoord
 from iris.fileformats.grib._load_convert import \
-    _MDI as MDI, \
+    _MDIs, \
     grid_definition_template_4_and_5
 from iris.tests import mock
 
-
+MDI = _MDIs[1]
 RESOLUTION = 1e6
 
 
