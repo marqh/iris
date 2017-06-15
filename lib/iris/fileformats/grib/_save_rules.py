@@ -257,8 +257,18 @@ def latlon_first_last(x_coord, y_coord, grib):
 def dx_dy(x_coord, y_coord, grib):
     x_step = regular_step(x_coord)
     y_step = regular_step(y_coord)
-    gribapi.grib_set(grib, "DxInDegrees", float(abs(x_step)))
-    gribapi.grib_set(grib, "DyInDegrees", float(abs(y_step)))
+    if x_coord.units == 'degrees':
+        gribapi.grib_set(grib, "iDirectionIncrement",
+                         round(1e6 * float(abs(x_step))))
+    else:
+        raise ValueError('X coordinate must be in degrees, not {}'
+                         '.'.format(x_coord.units))
+    if y_coord.units == 'degrees':
+        gribapi.grib_set(grib, "jDirectionIncrement",
+                         round(1e6 * float(abs(y_step))))
+    else:
+        raise ValueError('Y coordinate must be in degrees, not {}'
+                         '.'.format(y_coord.units))
 
 
 def scanning_mode_flags(x_coord, y_coord, grib):
