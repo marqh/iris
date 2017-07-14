@@ -180,7 +180,7 @@ def unscale(value, factor):
 
 
 # Regulations 92.1.4 and 92.1.5.
-_MDIs = [2 ** 31 - 1, 2 ** 32 - 1]
+_MDIs = [2 ** 32 - 1, 2 ** 32 - 1]
 # Note:
 #   1. Integer "on-disk" values (aka. coded keys) in GRIB messages:
 #       - Are 8-, 16-, or 32-bit.
