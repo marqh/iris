@@ -1050,12 +1050,15 @@ def _all_other_rules(f):
         standard_name = STASH_TO_CF[str(f.stash)].standard_name
         units = STASH_TO_CF[str(f.stash)].units
         long_name = STASH_TO_CF[str(f.stash)].long_name
-    elif(isinstance(f.coord_system(), iris.coord_systems.GeogCS) and
+    # avoid these caluses for mocked Field objects
+    elif(hasattr(f, 'coord_system') and
+         isinstance(f.coord_system(), iris.coord_systems.GeogCS) and
          str(f.stash) in STASH_AND_UNROTATED_TO_CF):
         standard_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].standard_name
         units = STASH_AND_UNROTATED_TO_CF[str(f.stash)].units
         long_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].long_name
-    elif(isinstance(f.coord_system(), iris.coord_systems.RotatedGeogCS) and
+    elif(hasattr(f, 'coord_system') and
+         isinstance(f.coord_system(), iris.coord_systems.RotatedGeogCS) and
          str(f.stash) in STASH_AND_ROTATED_TO_CF):
         standard_name = STASH_AND_ROTATED_TO_CF[str(f.stash)].standard_name
         units = STASH_AND_ROTATED_TO_CF[str(f.stash)].units

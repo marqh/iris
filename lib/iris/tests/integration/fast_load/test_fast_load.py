@@ -151,8 +151,8 @@ class Mixin_FieldTest(object):
         # Those could in principle be looked up, but it's a bit awkward.
         phenomenon_values = [
             ('air_temperature', 'K', 'm01s01i004'),
-            ('x_wind', 'm s-1', 'm01s00i002'),
-            ('y_wind', 'm s-1', 'm01s00i003'),
+            ('eastward_wind', 'm s-1', 'm01s00i002'),
+            ('northward_wind', 'm s-1', 'm01s00i003'),
             ('specific_humidity', 'kg kg-1', 'm01s00i010'),
             ]
 
@@ -587,6 +587,11 @@ class MixinProblemCases(object):
                                 standard_name='time', units=co_t_fake.units)
             one_cube.add_aux_coord(co_t_new, 0)
             expected = [one_cube]
+        # LBFC interpretation always delivers x_wind, but STASH and LBCODE
+        # will deliver eastward, so patch around this subtlety.
+        for acube in expected:
+            if acube.name() == 'eastward_wind':
+                acube.rename('x_wind')
         self.assertEqual(results, expected)
 
     def test_FAIL_pseudo_levels(self):

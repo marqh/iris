@@ -69,7 +69,7 @@ class Test(tests.IrisTest):
         else:
             self.assertEqual(metadata.factories, [factory])
         self.assertEqual(metadata.references, [])
-        self.assertEqual(metadata.standard_name, 'x_wind')
+        self.assertEqual(metadata.standard_name, 'eastward_wind')
         self.assertIsNone(metadata.long_name)
         self.assertEqual(metadata.units, cf_units.Unit('m s-1'))
         self.assertEqual(metadata.attributes, {'STASH': (1, 0, 2)})
