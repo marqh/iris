@@ -28,10 +28,13 @@ import calendar
 
 from iris.aux_factory import HybridHeightFactory, HybridPressureFactory
 from iris.coords import AuxCoord, CellMethod, DimCoord
+import iris.coord_systems
 from iris.fileformats.rules import (ConversionMetadata, Factory, Reference,
                                     ReferenceTarget)
 from iris.fileformats.um_cf_map import (LBFC_TO_CF, STASH_TO_CF,
-                                        STASHCODE_IMPLIED_HEIGHTS)
+                                        STASHCODE_IMPLIED_HEIGHTS,
+                                        STASH_AND_UNROTATED_TO_CF,
+                                        STASH_AND_ROTATED_TO_CF)
 import iris.fileformats.pp
 
 
@@ -1047,6 +1050,16 @@ def _all_other_rules(f):
         standard_name = STASH_TO_CF[str(f.stash)].standard_name
         units = STASH_TO_CF[str(f.stash)].units
         long_name = STASH_TO_CF[str(f.stash)].long_name
+    elif(isinstance(f.coord_system(), iris.coord_systems.GeogCS) and
+         str(f.stash) in STASH_AND_UNROTATED_TO_CF):
+        standard_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].standard_name
+        units = STASH_AND_UNROTATED_TO_CF[str(f.stash)].units
+        long_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].long_name
+    elif(isinstance(f.coord_system(), iris.coord_systems.RotatedGeogCS) and
+         str(f.stash) in STASH_AND_ROTATED_TO_CF):
+        standard_name = STASH_AND_ROTATED_TO_CF[str(f.stash)].standard_name
+        units = STASH_AND_ROTATED_TO_CF[str(f.stash)].units
+        long_name = STASH_AND_ROTATED_TO_CF[str(f.stash)].long_name
 
     if (not f.stash.is_valid and f.lbfc in LBFC_TO_CF):
         standard_name = LBFC_TO_CF[f.lbfc].standard_name
