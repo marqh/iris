@@ -33,8 +33,9 @@ from iris.fileformats.rules import (ConversionMetadata, Factory, Reference,
                                     ReferenceTarget)
 from iris.fileformats.um_cf_map import (LBFC_TO_CF, STASH_TO_CF,
                                         STASHCODE_IMPLIED_HEIGHTS,
-                                        STASH_AND_UNROTATED_TO_CF,
-                                        STASH_AND_ROTATED_TO_CF)
+                                        STASH_GRID_EN_ALIGN_TO_CF,
+                                        STASH_GRID_EN_DIVERGE_TO_CF)
+
 import iris.fileformats.pp
 
 
@@ -1050,19 +1051,16 @@ def _all_other_rules(f):
         standard_name = STASH_TO_CF[str(f.stash)].standard_name
         units = STASH_TO_CF[str(f.stash)].units
         long_name = STASH_TO_CF[str(f.stash)].long_name
-    # avoid these caluses for mocked Field objects
     elif(hasattr(f, 'coord_system') and
          isinstance(f.coord_system(), iris.coord_systems.GeogCS) and
-         str(f.stash) in STASH_AND_UNROTATED_TO_CF):
-        standard_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].standard_name
-        units = STASH_AND_UNROTATED_TO_CF[str(f.stash)].units
-        long_name = STASH_AND_UNROTATED_TO_CF[str(f.stash)].long_name
-    elif(hasattr(f, 'coord_system') and
-         isinstance(f.coord_system(), iris.coord_systems.RotatedGeogCS) and
-         str(f.stash) in STASH_AND_ROTATED_TO_CF):
-        standard_name = STASH_AND_ROTATED_TO_CF[str(f.stash)].standard_name
-        units = STASH_AND_ROTATED_TO_CF[str(f.stash)].units
-        long_name = STASH_AND_ROTATED_TO_CF[str(f.stash)].long_name
+         str(f.stash) in STASH_GRID_EN_ALIGN_TO_CF):
+        standard_name = STASH_GRID_EN_ALIGN_TO_CF[str(f.stash)].standard_name
+        units = STASH_GRID_EN_ALIGN_TO_CF[str(f.stash)].units
+        long_name = STASH_GRID_EN_ALIGN_TO_CF[str(f.stash)].long_name
+    elif str(f.stash) in STASH_GRID_EN_DIVERGE_TO_CF:
+        standard_name = STASH_GRID_EN_DIVERGE_TO_CF[str(f.stash)].standard_name
+        units = STASH_GRID_EN_DIVERGE_TO_CF[str(f.stash)].units
+        long_name = STASH_GRID_EN_DIVERGE_TO_CF[str(f.stash)].long_name
 
     if (not f.stash.is_valid and f.lbfc in LBFC_TO_CF):
         standard_name = LBFC_TO_CF[f.lbfc].standard_name
